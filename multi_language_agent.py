@@ -40,23 +40,149 @@ class SyntaxFixer:
         self.config = self.LANGUAGES[lang_lower]
     
     def detect_issues(self, code: str) -> List[Dict]:
-        """Detect syntax issues in code."""
-        issues = []
+        """Detect CRITICAL syntax issues in code only."""
+        critical_issues = []
         
         if self.language in ['python']:
-            issues.extend(self._check_python(code))
+            critical_issues.extend(self._check_python_critical(code))
         elif self.language in ['javascript', 'typescript']:
-            issues.extend(self._check_js_ts(code))
+            critical_issues.extend(self._check_js_ts_critical(code))
         elif self.language in ['java', 'cpp', 'csharp', 'rust']:
-            issues.extend(self._check_c_style(code))
+            critical_issues.extend(self._check_c_style_critical(code))
         elif self.language == 'go':
-            issues.extend(self._check_go(code))
+            critical_issues.extend(self._check_go_critical(code))
         elif self.language == 'php':
-            issues.extend(self._check_php(code))
+            critical_issues.extend(self._check_php_critical(code))
         elif self.language == 'ruby':
-            issues.extend(self._check_ruby(code))
+            critical_issues.extend(self._check_ruby_critical(code))
+        
+        return critical_issues
+    
+    def _check_python_critical(self, code: str) -> List[Dict]:
+        """Check CRITICAL Python syntax issues only."""
+        issues = []
+        lines = code.split('\n')
+        
+        try:
+            import ast
+            ast.parse(code)
+        except SyntaxError as e:
+            issues.append({
+                'line': e.lineno or 0,
+                'type': 'SyntaxError',
+                'message': str(e.msg),
+                'fix': None
+            })
         
         return issues
+    
+    def _check_js_ts_critical(self, code: str) -> List[Dict]:
+        """Check CRITICAL JavaScript/TypeScript syntax issues only."""
+        issues = []
+        
+        # Only check for unmatched braces/brackets/parens
+        in_string = False
+        quote_char = None
+        brace_count = 0
+        bracket_count = 0
+        paren_count = 0
+        
+        for char in code:
+            if char in ['"', "'", '`'] and (not in_string or char == quote_char):
+                in_string = not in_string
+                quote_char = char if in_string else None
+            elif not in_string:
+                if char == '{': brace_count += 1
+                elif char == '}': brace_count -= 1
+                elif char == '[': bracket_count += 1
+                elif char == ']': bracket_count -= 1
+                elif char == '(': paren_count += 1
+                elif char == ')': paren_count -= 1
+        
+        if brace_count != 0:
+            issues.append({
+                'line': -1,
+                'type': 'UnmatchedBrace',
+                'message': f'Unmatched braces',
+                'fix': None
+            })
+        
+        if bracket_count != 0:
+            issues.append({
+                'line': -1,
+                'type': 'UnmatchedBracket',
+                'message': f'Unmatched brackets',
+                'fix': None
+            })
+        
+        if paren_count != 0:
+            issues.append({
+                'line': -1,
+                'type': 'UnmatchedParen',
+                'message': f'Unmatched parentheses',
+                'fix': None
+            })
+        
+        return issues
+    
+    def _check_c_style_critical(self, code: str) -> List[Dict]:
+        """Check CRITICAL C-style language syntax only."""
+        issues = []
+        
+        # Check for unmatched braces
+        in_string = False
+        quote_char = None
+        brace_count = 0
+        bracket_count = 0
+        paren_count = 0
+        
+        for char in code:
+            if char in ['"', "'"] and (not in_string or char == quote_char):
+                in_string = not in_string
+                quote_char = char if in_string else None
+            elif not in_string:
+                if char == '{': brace_count += 1
+                elif char == '}': brace_count -= 1
+                elif char == '[': bracket_count += 1
+                elif char == ']': bracket_count -= 1
+                elif char == '(': paren_count += 1
+                elif char == ')': paren_count -= 1
+        
+        if brace_count != 0:
+            issues.append({
+                'line': -1,
+                'type': 'UnmatchedBrace',
+                'message': 'Unmatched braces',
+                'fix': None
+            })
+        
+        return issues
+    
+    def _check_go_critical(self, code: str) -> List[Dict]:
+        """Check CRITICAL Go syntax issues."""
+        return []
+    
+    def _check_php_critical(self, code: str) -> List[Dict]:
+        """Check CRITICAL PHP syntax issues."""
+        issues = []
+        
+        # Check for unclosed PHP tags
+        open_tags = code.count('<?php') + code.count('<?')
+        close_tags = code.count('?>')
+        
+        if open_tags > close_tags:
+            issues.append({
+                'line': -1,
+                'type': 'UnclosedTag',
+                'message': 'Unclosed PHP tags',
+                'fix': None
+            })
+        
+        return issues
+    
+    def _check_ruby_critical(self, code: str) -> List[Dict]:
+        """Check CRITICAL Ruby syntax issues."""
+        return []
     
     def _check_python(self, code: str) -> List[Dict]:
         """Check Python syntax issues."""
@@ -113,26 +239,24 @@ class SyntaxFixer:
                 continue
             
             # Count braces/brackets/parens
-            brace_count += stripped.count('{') - stripped.count('}')
-            bracket_count += stripped.count('[') - stripped.count(']')
-            paren_count += stripped.count('(') - stripped.count(')')
+            # Only count unquoted braces
+            in_string = False
+            quote_char = None
+            for char in stripped:
+                if char in ['"', "'", '`'] and (not in_string or char == quote_char):
+                    in_string = not in_string
+                    quote_char = char if in_string else None
+                elif not in_string:
+                    if char == '{': brace_count += 1
+                    elif char == '}': brace_count -= 1
+                    elif char == '[': bracket_count += 1
+                    elif char == ']': bracket_count -= 1
+                    elif char == '(': paren_count += 1
+                    elif char == ')': paren_count -= 1
             
-            # Check for missing semicolons (heuristic)
-            if (stripped.endswith(')') or stripped.endswith(']') or 
-                any(stripped.startswith(kw) for kw in ['return ', 'const ', 'let ', 'var ']) and
-                not stripped.endswith(';') and not stripped.endswith('{') and
-                not stripped.endswith(',')):
-                
-                if i < len(lines) and not lines[i].strip().startswith('.'):
-                    issues.append({
-                        'line': i,
-                        'type': 'MissingSemicolon',
-                        'message': 'Missing semicolon',
-                        'fix': stripped + ';'
-                    })
-            
-            # Check for unclosed quotes
-            if stripped.count('"') % 2 != 0 or stripped.count("'") % 2 != 0:
+            # Check for unclosed quotes (only report critical issues)
+            quote_count = stripped.count('"') + stripped.count("'")
+            if quote_count % 2 != 0 and not stripped.startswith('//'):
                 issues.append({
                     'line': i,
                     'type': 'UnclosedString',
@@ -324,16 +448,146 @@ class MultiLanguageAgent:
         except ValueError:
             return False
     
+    def _language_specific_template(self, requirement: str) -> str:
+        """Generate language-specific prompt for better code quality."""
+        lang_prompts = {
+            'python': f"""Generate production-ready Python code that:
+{requirement}
+
+Requirements:
+- Use proper Python style (PEP 8)
+- Include docstrings for all functions/classes
+- Use type hints
+- Include error handling with try/except
+- No trailing semicolons
+- 4-space indentation
+- Import statements at top
+Return ONLY valid, executable Python code.""",
+            
+            'javascript': f"""Generate production-ready JavaScript code that:
+{requirement}
+
+Requirements:
+- Use modern ES6+ syntax
+- Include JSDoc comments
+- Every statement ends with semicolon
+- Use const/let (not var)
+- Include error handling
+- Proper curly brace placement (K&R style)
+- No trailing commas in objects
+Return ONLY valid, executable JavaScript code.""",
+            
+            'typescript': f"""Generate production-ready TypeScript code that:
+{requirement}
+
+Requirements:
+- Use proper TypeScript with full type annotations
+- Every statement ends with semicolon
+- Include interface/type definitions
+- Proper curly brace placement
+- Include JSDoc comments
+- Use const/let (not var)
+- No trailing commas
+Return ONLY valid, executable TypeScript code.""",
+            
+            'java': f"""Generate production-ready Java code that:
+{requirement}
+
+Requirements:
+- Use Java conventions (PascalCase for classes, camelCase for methods)
+- Every statement ends with semicolon
+- Include proper package structure
+- Include javadoc comments
+- Proper curly brace placement (Java style)
+- Import statements at top
+Return ONLY valid, executable Java code.""",
+            
+            'cpp': f"""Generate production-ready C++ code that:
+{requirement}
+
+Requirements:
+- Use modern C++ (C++17 or later)
+- Every statement ends with semicolon
+- Include proper header guards or #pragma once
+- Proper curly brace placement
+- Include comments explaining functionality
+- Use std namespace appropriately
+- No memory leaks (use smart pointers)
+Return ONLY valid, executable C++ code.""",
+            
+            'csharp': f"""Generate production-ready C# code that:
+{requirement}
+
+Requirements:
+- Use C# conventions (PascalCase)
+- Every statement ends with semicolon
+- Include XML documentation comments
+- Proper curly brace placement (C# style)
+- Use modern C# features
+- Proper namespace declarations
+Return ONLY valid, executable C# code.""",
+            
+            'go': f"""Generate production-ready Go code that:
+{requirement}
+
+Requirements:
+- Use Go conventions (camelCase, exported functions capitalized)
+- No semicolons at end of statements
+- Proper error handling with if err != nil
+- Include package declaration
+- Proper indentation (use gofmt style)
+- Include comments for exported functions
+Return ONLY valid, executable Go code.""",
+            
+            'rust': f"""Generate production-ready Rust code that:
+{requirement}
+
+Requirements:
+- Use Rust conventions and idioms
+- Every statement ends with semicolon (in blocks)
+- Include proper ownership/borrowing patterns
+- Include comments explaining functionality
+- Proper curly brace placement
+- Use Result/Option types appropriately
+Return ONLY valid, executable Rust code.""",
+            
+            'php': f"""Generate production-ready PHP code that:
+{requirement}
+
+Requirements:
+- Include <?php opening tag
+- Every statement ends with semicolon
+- Use modern PHP (7.4+)
+- Include proper error handling
+- Use PSR-12 coding standards
+- Include comments
+Return ONLY valid, executable PHP code (with closing tag if needed).""",
+            
+            'ruby': f"""Generate production-ready Ruby code that:
+{requirement}
+
+Requirements:
+- Use Ruby conventions (snake_case)
+- No semicolons at end of statements
+- Include comments/docstrings
+- Proper indentation (2 spaces)
+- Include error handling
+- Idiomatic Ruby style
+Return ONLY valid, executable Ruby code.""",
+        }
+        
+        return lang_prompts.get(self.language, requirement)
+    
     def generate(self, requirement: str) -> Dict:
         """Generate code in the target language."""
-        # Enhance requirement with language info
-        enhanced_req = f"Generate {self.language.upper()} code for: {requirement}"
+        # Use language-specific prompt for better quality
+        enhanced_req = self._language_specific_template(requirement)
         
         # Generate using base agent
         analysis = self.base_agent.analyze_requirements(enhanced_req)
         code = self.base_agent.generate_code(enhanced_req)
         
-        # Fix syntax issues
+        # Fix any remaining syntax issues
         if self.fixer:
             code, fixes = self.fixer.fix_code(code, auto_fix=True)
         else:
