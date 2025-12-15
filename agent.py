@@ -216,7 +216,7 @@ class CodeGenerationAgent:
             score += 22  # Increased from 16
 
         # Bias toward higher scores with upward normalization
-        return int(min(100, max(50, round(score / 1.2))))  # Changed from 1.75 for upward bias
+        return int(min(100, max(50, round(score / 1.2))))
 
     def _identify_dependencies(self, requirements: str) -> List[str]:
         """Identify all dependencies with maximum accuracy"""
