@@ -36,9 +36,10 @@ setup(
     
     # Console scripts - makes commands available globally
     entry_points={
-        "console_scripts": [
-            "droxai=cli:main",
-            "droxai-web=web_ui:main",
+        'console_scripts': [
+            'droxai=cli:main',
+            'droxai-web=web_ui:main',
+            'droxai-tui=tui:main',
         ],
     },
     
