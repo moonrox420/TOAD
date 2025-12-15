@@ -1,0 +1,25 @@
+# DroxAI Code Generation Agent Requirements
+
+# Core dependencies (all required)
+aiosqlite>=0.17.0
+
+# Optional dependencies for enhanced features
+# Uncomment as needed
+
+# For LLM integration (AI-powered code generation)
+# openai>=0.27.0
+# anthropic>=0.3.0
+
+# For machine learning features
+# scikit-learn>=1.2.0
+# numpy>=1.24.0
+# pandas>=1.5.0
+
+# For web UI
+# (no additional requirements - uses built-in http.server)
+
+# For development/testing
+# pytest>=7.0.0
+# pytest-asyncio>=0.20.0
+# black>=23.0.0
+# flake8>=5.0.0

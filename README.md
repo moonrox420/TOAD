@@ -88,35 +88,85 @@ cd code-boss
 pip install -r requirements.txt
 ```
 
-### Basic Usage
+### Three Ways to Use
+
+#### 1️⃣ **Command-Line Interface (CLI)**
+
+```bash
+# Generate code from requirements
+python cli.py generate "Create a REST API with authentication"
+
+# Analyze requirements without generating
+python cli.py analyze "Build a web scraper"
+
+# Interactive mode
+python cli.py interactive
+
+# Run benchmarks
+python cli.py benchmark
+
+# Save output to file
+python cli.py generate "Create a data processor" --output generated_code.py
+
+# Use unlimited agent (larger, more comprehensive code)
+python cli.py --unlimited generate "Your requirements"
+```
+
+**CLI Features:**
+- Natural language code generation
+- Requirement analysis without code generation
+- Interactive REPL mode
+- Benchmark suite with detailed metrics
+- File output support
+- Standard or unlimited agent mode
+
+#### 2️⃣ **Web User Interface**
+
+```bash
+# Start the web server
+python web_ui.py
+
+# Open your browser to:
+# http://localhost:8000
+```
+
+**Web UI Features:**
+- Beautiful, modern interface
+- Real-time code generation
+- Side-by-side requirement/code view
+- Complexity and quality metrics
+- One-click benchmarking
+- Analysis-only mode
+- Responsive design (works on mobile)
+
+#### 3️⃣ **Python API**
 
 ```python
-from agent import CodeGenerationAgent
+from agent import CodeGenerationAgent, UnlimitedCodeAgent
 
 # Create an agent
 agent = CodeGenerationAgent()
 
-# Generate code from natural language requirements
+# Analyze requirements
+analysis = agent.analyze_requirements("Create a REST API with authentication")
+print(f"Complexity: {analysis['complexity_score']}/100")
+print(f"Code Type: {analysis['code_type']}")
+print(f"Architecture: {analysis['architecture']}")
+
+# Generate code
 requirements = "Create a REST API with user authentication and database integration"
 code = agent.generate_code(requirements)
 
+# Validate the output
+validation = agent._validate_code(code)
+print(f"Valid: {validation['valid']}")
+
 # Print or save the generated code
 print(code)
-```
 
-### Advanced Usage
-
-```python
-from agent import UnlimitedCodeAgent
-
-# Use the unlimited agent for maximum complexity and features
-agent = UnlimitedCodeAgent()
-
-# Analyze requirements first
-analysis = agent.analyze_requirements(requirements)
-print(f"Complexity Score: {analysis['complexity_score']}")
-print(f"Code Type Detected: {analysis['code_type']}")
-print(f"Architectural Pattern: {analysis['architecture']}")
+# Use unlimited agent for maximum features
+unlimited_agent = UnlimitedCodeAgent()
+code = unlimited_agent.generate_code(requirements, refinement_passes=3)
 
 # Generate with custom refinement passes
 code = agent.generate_code(requirements, refinement_passes=3)
