@@ -11,6 +11,7 @@ Run with: python tui.py
 import sys
 from pathlib import Path
 from agent import CodeGenerationAgent, UnlimitedCodeAgent
+from multi_language_agent import MultiLanguageAgent
 
 
 class Colors:
@@ -35,10 +36,12 @@ class ConversationalTUI:
         """Initialize the TUI."""
         self.agent = CodeGenerationAgent()
         self.unlimited_agent = UnlimitedCodeAgent()
+        self.multi_agent = MultiLanguageAgent()
         self.use_unlimited = False
         self.last_code = None
         self.last_analysis = None
         self.conversation_history = []
+        self.current_language = 'python'
     
     def agent_say(self, text: str, color: str = '') -> None:
         """Agent speaks."""
@@ -71,17 +74,19 @@ class ConversationalTUI:
     def start(self) -> None:
         """Start the conversation."""
         print()
-        self.agent_say("Hey there! I'm DroxAI, your code generation agent.")
+        self.agent_say("Hey there! I'm DroxAI, your agentic code assistant.")
         self.agent_say(f"I score 92.83/100 on complexity, quality, and validity.")
-        self.agent_say("I can generate code, analyze requirements, scan files, and fix issues.")
+        self.agent_say("I generate code in 10+ languages, fix syntax errors, scan projects, and more.")
         print()
         self.agent_say("What would you like me to help with today?")
         print()
         self.agent_say("Quick examples:")
         print(f"  {Colors.YELLOW}→ generate a login function")
-        print(f"  → scan /path/to/project")
-        print(f"  → fix myfile.py")
-        print(f"  → benchmark")
+        print(f"  → language javascript")
+        print(f"  → generate a fetch API call")
+        print(f"  → autofix my_broken_code.js")
+        print(f"  → scan /my/project")
+        print(f"  → languages")
         print(f"  → help{Colors.RESET}")
         print()
         
@@ -128,6 +133,14 @@ class ConversationalTUI:
                     self.handle_write(file_path)
                 elif lower_input == 'exit':
                     self.handle_exit()
+                elif lower_input.startswith('language '):
+                    lang = user_input[9:].strip()
+                    self.handle_language(lang)
+                elif lower_input.startswith('autofix '):
+                    code_input = user_input[8:].strip()
+                    self.handle_autofix(code_input)
+                elif lower_input in ['languages', 'langs']:
+                    self.show_languages()
                 else:
                     # Treat as implicit generate request
                     self.agent_say("I think you want me to generate code for that. Let me analyze it...")
@@ -145,15 +158,18 @@ class ConversationalTUI:
         self.agent_say("Here's what I can do:")
         print(f"  {Colors.YELLOW}generate <requirement>{Colors.RESET}  - Create code from your description")
         print(f"  {Colors.YELLOW}analyze <requirement>{Colors.RESET}   - Just analyze without generating")
+        print(f"  {Colors.YELLOW}language <name>{Colors.RESET}        - Switch languages (python, javascript, etc)")
+        print(f"  {Colors.YELLOW}languages{Colors.RESET}              - Show all supported languages")
+        print(f"  {Colors.YELLOW}autofix <code/file>{Colors.RESET}    - Auto-fix syntax errors")
         print(f"  {Colors.YELLOW}scan <directory>{Colors.RESET}       - Scan directory for code issues")
         print(f"  {Colors.YELLOW}fix <file>{Colors.RESET}             - Auto-fix common issues in a file")
         print(f"  {Colors.YELLOW}benchmark{Colors.RESET}              - Test my performance on 3 tasks")
-        print(f"  {Colors.YELLOW}show last code${Colors.RESET}        - See what I generated before")
-        print(f"  {Colors.YELLOW}save <filename>${Colors.RESET}       - Save code to a file")
-        print(f"  {Colors.YELLOW}write <filename>${Colors.RESET}      - Write last code to file")
-        print(f"  {Colors.YELLOW}unlimited${Colors.RESET}             - Toggle unlimited mode (more depth)")
-        print(f"  {Colors.YELLOW}help${Colors.RESET}                  - Show this menu")
-        print(f"  {Colors.YELLOW}exit${Colors.RESET}                  - Say goodbye")
+        print(f"  {Colors.YELLOW}show last code{Colors.RESET}         - See what I generated before")
+        print(f"  {Colors.YELLOW}save <filename>{Colors.RESET}        - Save code to a file")
+        print(f"  {Colors.YELLOW}write <filename>{Colors.RESET}       - Write last code to file")
+        print(f"  {Colors.YELLOW}unlimited{Colors.RESET}              - Toggle unlimited mode (more depth)")
+        print(f"  {Colors.YELLOW}help{Colors.RESET}                   - Show this menu")
+        print(f"  {Colors.YELLOW}exit{Colors.RESET}                   - Say goodbye")
         print()
     
     def handle_generate(self, requirement: str) -> None:
@@ -457,6 +473,104 @@ class ConversationalTUI:
             self.agent_say(f"Created {Colors.YELLOW}{file_path}{Colors.RESET}. Code written!")
         except Exception as e:
             self.agent_say(f"Couldn't write: {Colors.RED}{str(e)}{Colors.RESET}")
+        
+        print()
+    
+    def show_languages(self) -> None:
+        """Show supported languages."""
+        print()
+        self.agent_say("I support these languages:")
+        langs = [
+            ('Python', 'python'),
+            ('JavaScript', 'javascript'),
+            ('TypeScript', 'typescript'),
+            ('Java', 'java'),
+            ('C++', 'cpp'),
+            ('C#', 'csharp'),
+            ('Go', 'go'),
+            ('Rust', 'rust'),
+            ('PHP', 'php'),
+            ('Ruby', 'ruby'),
+        ]
+        
+        for name, code in langs:
+            symbol = '▪' if code == self.current_language else '□'
+            print(f"  {symbol} {Colors.YELLOW}{code}{Colors.RESET} - {name}")
+        
+        print(f"\nUse: {Colors.YELLOW}language <name>{Colors.RESET} to switch")
+        print()
+    
+    def handle_language(self, language: str) -> None:
+        """Switch to a language."""
+        if not language:
+            self.show_languages()
+            return
+        
+        if self.multi_agent.set_language(language):
+            self.current_language = language.lower()
+            print()
+            self.agent_say(f"Switched to {Colors.YELLOW}{language.upper()}{Colors.RESET}!")
+            print()
+        else:
+            self.agent_say(f"I don't support {Colors.RED}{language}{Colors.RESET}. Use 'languages' to see what I support.")
+            print()
+    
+    def handle_autofix(self, code_or_file: str) -> None:
+        """Auto-fix syntax errors in code."""
+        if not code_or_file:
+            self.agent_say("Give me code or a filename to fix!")
+            return
+        
+        # Check if it's a file
+        file_path = Path(code_or_file)
+        if file_path.exists():
+            try:
+                code = file_path.read_text()
+            except Exception as e:
+                self.agent_say(f"Can't read file: {Colors.RED}{str(e)}{Colors.RESET}")
+                return
+        else:
+            # Treat as inline code
+            code = code_or_file
+        
+        print()
+        self.system_say("Analyzing syntax...")
+        
+        result = self.multi_agent.fix_code(code)
+        
+        if result.get('error'):
+            self.agent_say(f"Error: {Colors.RED}{result['error']}{Colors.RESET}")
+            return
+        
+        fixes = result.get('fixes_applied', [])
+        remaining = result.get('remaining_issues', [])
+        
+        if fixes:
+            self.agent_say(f"Fixed {Colors.GREEN}{len(fixes)}{Colors.RESET} issue(s):")
+            for fix in fixes[:5]:
+                print(f"  - Line {fix['line']}: {fix['type']}")
+            if len(fixes) > 5:
+                print(f"  ... and {len(fixes) - 5} more")
+        
+        if remaining:
+            self.agent_say(f"Still {Colors.YELLOW}{len(remaining)}{Colors.RESET} issue(s) remaining:")
+            for issue in remaining[:5]:
+                line_str = f"Line {issue['line']}" if issue['line'] > 0 else "Overall"
+                print(f"  - {line_str}: {issue['type']} - {issue['message']}")
+            if len(remaining) > 5:
+                print(f"  ... and {len(remaining) - 5} more")
+        else:
+            self.agent_say("All syntax issues fixed!")
+        
+        # Save the fixed code
+        self.last_code = result['code']
+        
+        if file_path.exists():
+            try:
+                file_path.write_text(result['code'])
+                self.agent_say(f"Updated {Colors.YELLOW}{code_or_file}{Colors.RESET}")
+            except Exception as e:
+                self.agent_say(f"Couldn't update file: {Colors.RED}{str(e)}{Colors.RESET}")
         
         print()
 
