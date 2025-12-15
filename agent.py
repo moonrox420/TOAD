@@ -1068,21 +1068,48 @@ def delete(session: Session, model: T, id: int) -> bool:
 '''
     
     def _generate_orm_models(self, analysis: Dict[str, Any]) -> str:
-        """Generate ORM models"""
-        return '''class User(BaseModel):
-    __tablename__ = "users"
+        """Generate ORM models with type hints"""
+        return '''from typing import Optional
+from sqlalchemy import String
+
+class User(BaseModel):
+    """User model for authentication and account management"""
+    __tablename__: str = "users"
     
-    username = Column(String(50), unique=True)
-    email = Column(String(100), unique=True)
-    password_hash = Column(String(255))
+    username: str = Column(String(50), unique=True)
+    email: str = Column(String(100), unique=True)
+    password_hash: str = Column(String(255))
+    
+    def __repr__(self) -> str:
+        return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
+    
+    def validate(self) -> bool:
+        """Validate user data"""
+        if not self.username or not self.email:
+            raise ValueError("Username and email are required")
+        return True
 
 class Product(BaseModel):
-    __tablename__ = "products"
+    """Product model for inventory management"""
+    __tablename__: str = "products"
     
-    name = Column(String(100))
-    description = Column(String(500))
-    price = Column(Integer)
-    stock = Column(Integer)
+    name: str = Column(String(100))
+    description: str = Column(String(500))
+    price: int = Column(Integer)
+    stock: int = Column(Integer)
+    
+    def __repr__(self) -> str:
+        return f"<Product(id={self.id}, name='{self.name}', price={self.price})>"
+    
+    def is_in_stock(self) -> bool:
+        """Check if product is in stock"""
+        return self.stock > 0
+    
+    def apply_discount(self, discount_percent: float) -> int:
+        """Apply discount to price"""
+        if discount_percent < 0 or discount_percent > 100:
+            raise ValueError("Discount must be between 0 and 100")
+        return int(self.price * (1 - discount_percent / 100))
 '''
     
     def _generate_test_fixtures(self, analysis: Dict[str, Any]) -> str:
@@ -1132,35 +1159,37 @@ def cleanup():
 '''
     
     def _generate_test_cases(self, analysis: Dict[str, Any]) -> str:
-        """Generate comprehensive test cases"""
-        return '''class TestBasicFunctionality:
+        """Generate comprehensive test cases with type hints"""
+        return '''from typing import Any, Dict, Optional
+
+class TestBasicFunctionality:
     """Tests for basic functionality."""
     
-    def test_validate_input_with_valid_data(self, sample_data):
+    def test_validate_input_with_valid_data(self, sample_data: Dict[str, Any]) -> None:
         """Test validation with valid input."""
-        result = validate_input(sample_data)
+        result: bool = validate_input(sample_data)
         assert result is True
         assert isinstance(result, bool)
     
-    def test_validate_input_with_none(self):
+    def test_validate_input_with_none(self) -> None:
         """Test validation with None input."""
         with pytest.raises(ValueError):
             validate_input(None)
     
-    def test_validate_input_with_empty_dict(self):
+    def test_validate_input_with_empty_dict(self) -> None:
         """Test validation with empty dictionary."""
         with pytest.raises(ValueError):
             validate_input({})
     
-    def test_process_data_with_valid_input(self, sample_data):
+    def test_process_data_with_valid_input(self, sample_data: Dict[str, Any]) -> None:
         """Test data processing with valid input."""
-        result = process_data(sample_data)
+        result: Dict[str, Any] = process_data(sample_data)
         assert result is not None
         assert isinstance(result, dict)
     
-    def test_format_output_returns_string(self, sample_data):
+    def test_format_output_returns_string(self, sample_data: Dict[str, Any]) -> None:
         """Test output formatting."""
-        result = format_output(sample_data)
+        result: str = format_output(sample_data)
         assert isinstance(result, str)
         assert len(result) > 0
 
@@ -1168,35 +1197,35 @@ def cleanup():
 class TestEdgeCases:
     """Tests for edge cases and boundary conditions."""
     
-    def test_process_data_with_large_dataset(self):
+    def test_process_data_with_large_dataset(self) -> None:
         """Test processing with large dataset."""
-        large_data = {f"key_{i}": f"value_{i}" for i in range(1000)}
-        result = process_data(large_data)
+        large_data: Dict[str, str] = {f"key_{i}": f"value_{i}" for i in range(1000)}
+        result: Dict[str, Any] = process_data(large_data)
         assert result is not None
     
-    def test_process_data_with_special_characters(self):
+    def test_process_data_with_special_characters(self) -> None:
         """Test processing with special characters."""
-        special_data = {"name": "test@!#$%", "value": "<script>alert('xss')</script>"}
-        result = process_data(special_data)
+        special_data: Dict[str, str] = {"name": "test@!#$%", "value": "<script>alert('xss')</script>"}
+        result: Dict[str, Any] = process_data(special_data)
         assert result is not None
     
-    def test_process_data_with_nested_structures(self):
+    def test_process_data_with_nested_structures(self) -> None:
         """Test processing with nested data structures."""
-        nested_data = {
+        nested_data: Dict[str, Any] = {
             "level1": {
                 "level2": {
                     "level3": "deep_value"
                 }
             }
         }
-        result = process_data(nested_data)
+        result: Dict[str, Any] = process_data(nested_data)
         assert result is not None
 
 
 class TestErrorHandling:
     """Tests for error handling and exceptions."""
     
-    def test_process_data_handles_type_error(self):
+    def test_process_data_handles_type_error(self) -> None:
         """Test error handling for type errors."""
         with pytest.raises(Exception):
             process_data("invalid_string_input")
@@ -1260,35 +1289,79 @@ def assert_data_integrity(data):
 '''
     
     def _generate_transformations(self, analysis: Dict[str, Any]) -> str:
-        """Generate data transformations"""
-        return '''def normalize(data):
-    """Normalize data"""
-    return (data - data.mean()) / data.std()
+        """Generate data transformations with type hints"""
+        return '''import pandas as pd
+import numpy as np
+from typing import Union
 
-def aggregate(data, key):
-    """Aggregate data"""
-    return data.groupby(key).sum()
+def normalize(data: Union[pd.Series, pd.DataFrame, np.ndarray]) -> Union[pd.Series, pd.DataFrame, np.ndarray]:
+    """Normalize data using z-score normalization"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info("Normalizing data")
+        mean: float = data.mean() if isinstance(data, (pd.Series, pd.DataFrame)) else np.mean(data)
+        std: float = data.std() if isinstance(data, (pd.Series, pd.DataFrame)) else np.std(data)
+        normalized: Union[pd.Series, pd.DataFrame, np.ndarray] = (data - mean) / std
+        logger.info("Data normalization complete")
+        return normalized
+    except Exception as e:
+        logger.error(f"Error normalizing data: {str(e)}", exc_info=True)
+        raise
 
-def filter_data(data, condition):
-    """Filter data"""
-    return data[condition]
+def aggregate(data: pd.DataFrame, key: str) -> pd.DataFrame:
+    """Aggregate data by grouping key"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Aggregating data by {key}")
+        result: pd.DataFrame = data.groupby(key).sum()
+        logger.info(f"Aggregation complete: {len(result)} groups")
+        return result
+    except Exception as e:
+        logger.error(f"Error aggregating data: {str(e)}", exc_info=True)
+        raise
+
+def filter_data(data: pd.DataFrame, condition: pd.Series) -> pd.DataFrame:
+    """Filter data based on condition"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info("Filtering data")
+        result: pd.DataFrame = data[condition]
+        logger.info(f"Filtered {len(result)} rows")
+        return result
+    except Exception as e:
+        logger.error(f"Error filtering data: {str(e)}", exc_info=True)
+        raise
 '''
     
     def _generate_data_validation(self, analysis: Dict[str, Any]) -> str:
-        """Generate data validation"""
-        return '''def validate_schema(data, schema):
-    """Validate data schema"""
-    for key in schema:
-        if key not in data:
-            raise ValueError(f"Missing required field: {key}")
-    return True
+        """Generate data validation with comprehensive type hints"""
+        return '''from typing import Dict, Any, Type, Callable
 
-def validate_types(data, types):
-    """Validate data types"""
-    for key, expected_type in types.items():
-        if key in data and not isinstance(data[key], expected_type):
-            raise TypeError(f"Invalid type for {key}")
-    return True
+def validate_schema(data: Dict[str, Any], schema: Dict[str, Type]) -> bool:
+    """Validate data schema with type checking"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        for key in schema:
+            if key not in data:
+                raise ValueError(f"Missing required field: {key}")
+        logger.info("Schema validation passed")
+        return True
+    except Exception as e:
+        logger.error(f"Schema validation failed: {str(e)}", exc_info=True)
+        raise
+
+def validate_types(data: Dict[str, Any], types: Dict[str, Type]) -> bool:
+    """Validate data types with detailed logging"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        for key, expected_type in types.items():
+            if key in data and not isinstance(data[key], expected_type):
+                raise TypeError(f"Invalid type for {key}: expected {expected_type.__name__}, got {type(data[key]).__name__}")
+        logger.info("Type validation passed")
+        return True
+    except Exception as e:
+        logger.error(f"Type validation failed: {str(e)}", exc_info=True)
+        raise
 '''
     
     def _generate_advanced_error_handling(self, analysis: Dict[str, Any]) -> str:

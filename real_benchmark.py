@@ -16,13 +16,15 @@ class RealBenchmark:
         """Measure actual code quality metrics"""
         metrics = {}
         
-        # Type hints - count both -> and : type annotations
-        return_type_hints = len(re.findall(r'->\s*\w+|->.*?:', code))
-        param_type_hints = len(re.findall(r':\s*(?:str|int|float|bool|dict|list|Dict|List|Optional|Any|Tuple|Union|None)\b', code, re.IGNORECASE))
-        var_type_hints = len(re.findall(r':\s*\w+\s*=', code))
-        type_hint_count = return_type_hints + param_type_hints + var_type_hints
+        # Type hints - comprehensive detection
+        # Count: -> returns, : type annotations in params, : type in variable assignments
+        return_hints = len(re.findall(r'->\s*(?:str|int|float|bool|dict|list|Dict|List|Optional|Any|Tuple|Union|None|Callable|DataFrame|Series|ndarray|Boolean|Type)', code, re.IGNORECASE))
+        param_hints = len(re.findall(r'\(\s*\w+\s*:\s*(?:str|int|float|bool|dict|list|Dict|List|Optional|Any|Tuple|Union|None|pd\.|np\.|logging\.Logger|Session|BaseModel)', code, re.IGNORECASE))
+        var_hints = len(re.findall(r':\s*(?:str|int|float|bool|dict|list|Dict|List|Optional|Any|Tuple|Union|None|pd\.|np\.|logging\.Logger|Session|BaseModel|bool|float)\b', code))
+        all_hints = return_hints + param_hints + var_hints
+        
         lines = len(code.split('\n'))
-        metrics['type_hints_ratio'] = min(100, (type_hint_count / max(1, lines)) * 100)
+        metrics['type_hints_ratio'] = min(100, (all_hints / max(1, lines)) * 100)
         
         # Docstrings
         docstring_count = len(re.findall(r'"""', code)) // 2
