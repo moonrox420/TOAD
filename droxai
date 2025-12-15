@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# DroxAI Code Generation Agent - Unix/Linux/Mac Wrapper
+#
+# Usage:
+#   ./droxai generate "Create a REST API"
+#   ./droxai analyze "requirement"
+#   ./droxai interactive
+#   ./droxai benchmark
+#
+# To install globally:
+#   1. cp droxai /usr/local/bin/droxai
+#   2. chmod +x /usr/local/bin/droxai
+#   3. Edit line below to point to your installation
+#   4. Then use 'droxai' from anywhere
+#
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$SCRIPT_DIR"
+
+# Check if agent.py exists
+if [ ! -f "$PROJECT_DIR/agent.py" ]; then
+    echo "Error: DroxAI project not found at $PROJECT_DIR"
+    echo "Please update the path in this script."
+    exit 1
+fi
+
+# Run the CLI
+python3 "$PROJECT_DIR/cli.py" "$@"
