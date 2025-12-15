@@ -73,17 +73,16 @@ class ConversationalTUI:
         print()
         self.agent_say("Hey there! I'm DroxAI, your code generation agent.")
         self.agent_say(f"I score 92.83/100 on complexity, quality, and validity.")
+        self.agent_say("I can generate code, analyze requirements, scan files, and fix issues.")
+        print()
         self.agent_say("What would you like me to help with today?")
         print()
-        self.agent_say("You can ask me to:")
-        print(f"  {Colors.YELLOW}→ generate [requirement]{Colors.RESET}  (e.g., 'generate a login function')")
-        print(f"  {Colors.YELLOW}→ analyze [requirement]{Colors.RESET}   (e.g., 'analyze a web API')")
-        print(f"  {Colors.YELLOW}→ benchmark{Colors.RESET}             (run performance tests)")
-        print(f"  {Colors.YELLOW}→ show last code{Colors.RESET}        (display last generated code)")
-        print(f"  {Colors.YELLOW}→ save [filename]{Colors.RESET}       (save code to file)")
-        print(f"  {Colors.YELLOW}→ unlimited{Colors.RESET}             (toggle unlimited mode)")
-        print(f"  {Colors.YELLOW}→ help{Colors.RESET}                  (show this again)")
-        print(f"  {Colors.YELLOW}→ exit{Colors.RESET}                  (goodbye!)")
+        self.agent_say("Quick examples:")
+        print(f"  {Colors.YELLOW}→ generate a login function")
+        print(f"  → scan /path/to/project")
+        print(f"  → fix myfile.py")
+        print(f"  → benchmark")
+        print(f"  → help{Colors.RESET}")
         print()
         
         self.conversation_loop()
@@ -118,6 +117,15 @@ class ConversationalTUI:
                     self.handle_save(filename)
                 elif lower_input == 'unlimited':
                     self.handle_unlimited()
+                elif lower_input.startswith('scan '):
+                    path = user_input[5:].strip()
+                    self.handle_scan(path)
+                elif lower_input.startswith('fix '):
+                    file_path = user_input[4:].strip()
+                    self.handle_fix(file_path)
+                elif lower_input.startswith('write '):
+                    file_path = user_input[6:].strip()
+                    self.handle_write(file_path)
                 elif lower_input == 'exit':
                     self.handle_exit()
                 else:
@@ -137,12 +145,15 @@ class ConversationalTUI:
         self.agent_say("Here's what I can do:")
         print(f"  {Colors.YELLOW}generate <requirement>{Colors.RESET}  - Create code from your description")
         print(f"  {Colors.YELLOW}analyze <requirement>{Colors.RESET}   - Just analyze without generating")
+        print(f"  {Colors.YELLOW}scan <directory>{Colors.RESET}       - Scan directory for code issues")
+        print(f"  {Colors.YELLOW}fix <file>{Colors.RESET}             - Auto-fix common issues in a file")
         print(f"  {Colors.YELLOW}benchmark{Colors.RESET}              - Test my performance on 3 tasks")
-        print(f"  {Colors.YELLOW}show last code{Colors.RESET}         - See what I generated before")
-        print(f"  {Colors.YELLOW}save <filename>{Colors.RESET}        - Save code to a file")
-        print(f"  {Colors.YELLOW}unlimited{Colors.RESET}              - Toggle unlimited mode (more depth)")
-        print(f"  {Colors.YELLOW}help{Colors.RESET}                   - Show this menu")
-        print(f"  {Colors.YELLOW}exit{Colors.RESET}                   - Say goodbye")
+        print(f"  {Colors.YELLOW}show last code${Colors.RESET}        - See what I generated before")
+        print(f"  {Colors.YELLOW}save <filename>${Colors.RESET}       - Save code to a file")
+        print(f"  {Colors.YELLOW}write <filename>${Colors.RESET}      - Write last code to file")
+        print(f"  {Colors.YELLOW}unlimited${Colors.RESET}             - Toggle unlimited mode (more depth)")
+        print(f"  {Colors.YELLOW}help${Colors.RESET}                  - Show this menu")
+        print(f"  {Colors.YELLOW}exit${Colors.RESET}                  - Say goodbye")
         print()
     
     def handle_generate(self, requirement: str) -> None:
@@ -297,6 +308,157 @@ class ConversationalTUI:
         print(f'{Colors.GRAY}https://github.com/moonrox420/TOAD{Colors.RESET}')
         print()
         sys.exit(0)
+    
+    def handle_scan(self, directory: str) -> None:
+        """Scan a directory for issues."""
+        if not directory:
+            self.agent_say("Tell me which directory to scan!")
+            return
+        
+        path = Path(directory)
+        if not path.exists():
+            self.agent_say(f"Directory doesn't exist: {Colors.RED}{directory}{Colors.RESET}")
+            return
+        
+        print()
+        self.system_say(f"Scanning {directory}...")
+        
+        issues = []
+        files_scanned = 0
+        
+        for py_file in path.rglob('*.py'):
+            if any(skip in py_file.parts for skip in {'.git', '__pycache__', '.venv', 'venv'}):
+                continue
+            
+            files_scanned += 1
+            try:
+                import ast
+                content = py_file.read_text(encoding='utf-8', errors='replace')
+                
+                # Check syntax
+                try:
+                    ast.parse(content)
+                except SyntaxError as e:
+                    issues.append({
+                        'file': str(py_file.relative_to(path)),
+                        'line': e.lineno or 0,
+                        'severity': 'error',
+                        'type': 'SyntaxError',
+                        'msg': str(e.msg)
+                    })
+                
+                # Check for long lines
+                for i, line in enumerate(content.split('\n'), 1):
+                    if len(line) > 120:
+                        issues.append({
+                            'file': str(py_file.relative_to(path)),
+                            'line': i,
+                            'severity': 'warning',
+                            'type': 'LineLength',
+                            'msg': f'Line too long ({len(line)} > 120)'
+                        })
+            except Exception as e:
+                issues.append({
+                    'file': str(py_file.relative_to(path)),
+                    'line': 0,
+                    'severity': 'error',
+                    'type': 'ScanError',
+                    'msg': str(e)
+                })
+        
+        print()
+        self.agent_say(f"Scanned {files_scanned} Python files, found {len(issues)} issue(s).")
+        
+        if not issues:
+            self.agent_say("Everything looks good!")
+            return
+        
+        # Group by severity
+        errors = [i for i in issues if i['severity'] == 'error']
+        warnings = [i for i in issues if i['severity'] == 'warning']
+        
+        if errors:
+            print(f"\n{Colors.RED}ERRORS:{Colors.RESET}")
+            for issue in sorted(errors, key=lambda x: (x['file'], x['line']))[:10]:
+                print(f"  {issue['file']}:{issue['line']} - {issue['type']}: {issue['msg']}")
+            if len(errors) > 10:
+                print(f"  ... and {len(errors) - 10} more errors")
+        
+        if warnings:
+            print(f"\n{Colors.YELLOW}WARNINGS:{Colors.RESET}")
+            for issue in sorted(warnings, key=lambda x: (x['file'], x['line']))[:10]:
+                print(f"  {issue['file']}:{issue['line']} - {issue['type']}: {issue['msg']}")
+            if len(warnings) > 10:
+                print(f"  ... and {len(warnings) - 10} more warnings")
+        
+        print()
+    
+    def handle_fix(self, file_path: str) -> None:
+        """Auto-fix common issues in a file."""
+        if not file_path:
+            self.agent_say("Tell me which file to fix!")
+            return
+        
+        path = Path(file_path)
+        if not path.exists():
+            self.agent_say(f"File doesn't exist: {Colors.RED}{file_path}{Colors.RESET}")
+            return
+        
+        print()
+        self.system_say(f"Analyzing {file_path}...")
+        
+        content = path.read_text(encoding='utf-8')
+        original = content
+        fixes = []
+        
+        # Fix 1: Trailing whitespace
+        lines = content.split('\n')
+        new_lines = []
+        for line in lines:
+            stripped = line.rstrip()
+            if line != stripped:
+                fixes.append("Removed trailing whitespace")
+            new_lines.append(stripped)
+        content = '\n'.join(new_lines)
+        
+        # Fix 2: Multiple blank lines
+        while '\n\n\n' in content:
+            content = content.replace('\n\n\n', '\n\n')
+            if "Collapsed multiple blank lines" not in fixes:
+                fixes.append("Collapsed multiple blank lines")
+        
+        # Fix 3: Missing final newline
+        if content and not content.endswith('\n'):
+            content += '\n'
+            fixes.append("Added final newline")
+        
+        if content != original:
+            path.write_text(content)
+            self.agent_say(f"Fixed {Colors.GREEN}{len(fixes)}{Colors.RESET} issue(s):")
+            for fix in fixes:
+                print(f"  - {fix}")
+        else:
+            self.agent_say("No issues to fix in this file!")
+        
+        print()
+    
+    def handle_write(self, file_path: str) -> None:
+        """Write generated code to a file."""
+        if not file_path:
+            self.agent_say("Tell me what file to create!")
+            return
+        
+        if not self.last_code:
+            self.agent_say("Generate some code first!")
+            return
+        
+        try:
+            Path(file_path).write_text(self.last_code)
+            self.agent_say(f"Created {Colors.YELLOW}{file_path}{Colors.RESET}. Code written!")
+        except Exception as e:
+            self.agent_say(f"Couldn't write: {Colors.RED}{str(e)}{Colors.RESET}")
+        
+        print()
 
 
 def main() -> None:
