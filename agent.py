@@ -810,7 +810,7 @@ async def shutdown_event():
 '''
     
     def _generate_api_routes(self, analysis: Dict[str, Any]) -> str:
-        """Generate API routes"""
+        """Generate API routes with comprehensive type hints"""
         routes = []
         
         # Extract potential endpoints from requirements
@@ -818,18 +818,24 @@ async def shutdown_event():
         
         for entity in set(entities):
             routes.append(f'''@app.get("/{entity}")
-async def get_{entity}():
+async def get_{entity}() -> Dict[str, List[Dict[str, Any]]]:
     """Get all {entity}"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    logger.info("Fetching all {entity}")
     return {{"items": []}}
 
 @app.post("/{entity}")
-async def create_{entity}(item: dict):
+async def create_{entity}(item: Dict[str, Any]) -> Dict[str, Any]:
     """Create new {entity}"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    logger.info(f"Creating new {{entity}}")
     return {{"id": 1, **item}}
 
 @app.get("/{entity}/{{item_id}}")
-async def get_{entity}_by_id(item_id: int):
+async def get_{entity}_by_id(item_id: int) -> Dict[str, Any]:
     """Get {entity} by ID"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    logger.info(f"Fetching {{entity}} with id={{item_id}}")
     return {{"id": item_id}}
 ''')
         
@@ -878,96 +884,187 @@ async def auth_middleware(request, call_next):
         return ""
     
     def _generate_data_loading(self, analysis: Dict[str, Any]) -> str:
-        """Generate data loading code"""
+        """Generate data loading code with type hints"""
         return '''def load_data(file_path: str) -> pd.DataFrame:
-    """Load data from file"""
-    df = pd.read_csv(file_path)
-    return df
+    """Load data from file with error handling"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Loading data from {file_path}")
+        df: pd.DataFrame = pd.read_csv(file_path)
+        logger.info(f"Loaded {len(df)} rows")
+        return df
+    except Exception as e:
+        logger.error(f"Error loading data: {str(e)}", exc_info=True)
+        raise
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Preprocess data"""
-    df = df.fillna(df.mean())
-    return df
+    """Preprocess data with validation"""
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info("Starting data preprocessing")
+        result: pd.DataFrame = df.fillna(df.mean())
+        logger.info("Data preprocessing complete")
+        return result
+    except Exception as e:
+        logger.error(f"Error preprocessing data: {str(e)}", exc_info=True)
+        raise
 '''
     
     def _generate_model_definition(self, analysis: Dict[str, Any]) -> str:
-        """Generate ML model definition"""
+        """Generate ML model definition with type hints"""
         return '''from sklearn.ensemble import RandomForestClassifier
+import numpy as np
 
 class ModelPipeline:
-    def __init__(self):
-        self.model = RandomForestClassifier(n_estimators=100)
+    def __init__(self) -> None:
+        """Initialize model pipeline"""
+        self.model: RandomForestClassifier = RandomForestClassifier(n_estimators=100)
+        self.logger: logging.Logger = logging.getLogger(__name__)
     
-    def train(self, X, y):
+    def train(self, X: np.ndarray, y: np.ndarray) -> None:
         """Train the model"""
+        self.logger.info(f"Training model with {X.shape[0]} samples")
         self.model.fit(X, y)
+        self.logger.info("Model training complete")
     
-    def predict(self, X):
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """Make predictions"""
-        return self.model.predict(X)
+        self.logger.info(f"Making predictions for {X.shape[0]} samples")
+        predictions: np.ndarray = self.model.predict(X)
+        return predictions
+    
+    def evaluate(self, X: np.ndarray, y: np.ndarray) -> float:
+        """Evaluate model performance"""
+        score: float = self.model.score(X, y)
+        self.logger.info(f"Model evaluation score: {score:.4f}")
+        return score
 '''
     
     def _generate_training_code(self, analysis: Dict[str, Any]) -> str:
-        """Generate training loop"""
-        return '''def train_model(X_train, y_train, X_test, y_test):
-    """Train and evaluate model"""
-    model = ModelPipeline()
-    model.train(X_train, y_train)
+        """Generate training loop with type hints"""
+        return '''import numpy as np
+
+def train_model(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray, y_test: np.ndarray) -> ModelPipeline:
+    """Train and evaluate model with comprehensive logging"""
+    logger: logging.Logger = logging.getLogger(__name__)
     
-    train_score = model.model.score(X_train, y_train)
-    test_score = model.model.score(X_test, y_test)
-    
-    logging.info(f"Train score: {train_score:.4f}")
-    logging.info(f"Test score: {test_score:.4f}")
-    
-    return model
+    try:
+        logger.info("Initializing model training")
+        model: ModelPipeline = ModelPipeline()
+        
+        logger.info(f"Training on {X_train.shape[0]} samples")
+        model.train(X_train, y_train)
+        
+        train_score: float = model.evaluate(X_train, y_train)
+        test_score: float = model.evaluate(X_test, y_test)
+        
+        logger.info(f"Train score: {train_score:.4f}")
+        logger.info(f"Test score: {test_score:.4f}")
+        
+        if test_score < 0.5:
+            logger.warning("Low model performance detected")
+        
+        return model
+    except Exception as e:
+        logger.error(f"Error training model: {str(e)}", exc_info=True)
+        raise
 '''
     
     def _generate_database_schema(self, analysis: Dict[str, Any]) -> str:
-        """Generate database schema"""
+        """Generate database schema with type hints"""
         return '''from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from typing import Optional
 
 Base = declarative_base()
 
 class BaseModel(Base):
     __abstract__ = True
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: int = Column(Integer, primary_key=True)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+    updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 '''
     
     def _generate_database_queries(self, analysis: Dict[str, Any]) -> str:
-        """Generate database queries"""
-        return '''def get_all(session, model):
+        """Generate database queries with type hints"""
+        return '''from typing import TypeVar, Generic, List, Optional
+from sqlalchemy.orm import Session
+
+T = TypeVar('T')
+
+def get_all(session: Session, model: T) -> List[T]:
     """Get all records"""
-    return session.query(model).all()
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Fetching all {model.__name__} records")
+        results: List[T] = session.query(model).all()
+        logger.info(f"Found {len(results)} records")
+        return results
+    except Exception as e:
+        logger.error(f"Error fetching records: {str(e)}", exc_info=True)
+        raise
 
-def get_by_id(session, model, id):
+def get_by_id(session: Session, model: T, id: int) -> Optional[T]:
     """Get record by ID"""
-    return session.query(model).filter(model.id == id).first()
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Fetching {model.__name__} with id={id}")
+        result: Optional[T] = session.query(model).filter(model.id == id).first()
+        return result
+    except Exception as e:
+        logger.error(f"Error fetching record: {str(e)}", exc_info=True)
+        raise
 
-def create(session, model, **kwargs):
+def create(session: Session, model: T, **kwargs: Any) -> T:
     """Create new record"""
-    instance = model(**kwargs)
-    session.add(instance)
-    session.commit()
-    return instance
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Creating new {model.__name__}")
+        instance: T = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        logger.info(f"Created {model.__name__} with id={instance.id}")
+        return instance
+    except Exception as e:
+        logger.error(f"Error creating record: {str(e)}", exc_info=True)
+        session.rollback()
+        raise
 
-def update(session, model, id, **kwargs):
+def update(session: Session, model: T, id: int, **kwargs: Any) -> Optional[T]:
     """Update record"""
-    instance = session.query(model).filter(model.id == id).first()
-    for key, value in kwargs.items():
-        setattr(instance, key, value)
-    session.commit()
-    return instance
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Updating {model.__name__} with id={id}")
+        instance: Optional[T] = session.query(model).filter(model.id == id).first()
+        if not instance:
+            raise ValueError(f"Record not found")
+        for key, value in kwargs.items():
+            setattr(instance, key, value)
+        session.commit()
+        logger.info(f"Updated {model.__name__} with id={id}")
+        return instance
+    except Exception as e:
+        logger.error(f"Error updating record: {str(e)}", exc_info=True)
+        session.rollback()
+        raise
 
-def delete(session, model, id):
+def delete(session: Session, model: T, id: int) -> bool:
     """Delete record"""
-    instance = session.query(model).filter(model.id == id).first()
-    session.delete(instance)
-    session.commit()
+    logger: logging.Logger = logging.getLogger(__name__)
+    try:
+        logger.info(f"Deleting {model.__name__} with id={id}")
+        instance: Optional[T] = session.query(model).filter(model.id == id).first()
+        if not instance:
+            raise ValueError(f"Record not found")
+        session.delete(instance)
+        session.commit()
+        logger.info(f"Deleted {model.__name__} with id={id}")
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting record: {str(e)}", exc_info=True)
+        session.rollback()
+        raise
 '''
     
     def _generate_orm_models(self, analysis: Dict[str, Any]) -> str:

@@ -16,8 +16,11 @@ class RealBenchmark:
         """Measure actual code quality metrics"""
         metrics = {}
         
-        # Type hints
-        type_hint_count = len(re.findall(r'->', code))
+        # Type hints - count both -> and : type annotations
+        return_type_hints = len(re.findall(r'->\s*\w+|->.*?:', code))
+        param_type_hints = len(re.findall(r':\s*(?:str|int|float|bool|dict|list|Dict|List|Optional|Any|Tuple|Union|None)\b', code, re.IGNORECASE))
+        var_type_hints = len(re.findall(r':\s*\w+\s*=', code))
+        type_hint_count = return_type_hints + param_type_hints + var_type_hints
         lines = len(code.split('\n'))
         metrics['type_hints_ratio'] = min(100, (type_hint_count / max(1, lines)) * 100)
         
