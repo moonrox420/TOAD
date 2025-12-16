@@ -1,4 +1,3 @@
-python
 import os
 import sys
 import json
@@ -509,8 +508,7 @@ str]:
     def _generate_error_handling(self, analysis: Dict[str, Any]) -> str:
         """Generate error handling"""
         if analysis['security_needs']['error_handling']:
-            return "try:\n    # Main code execution\n    pass\nexcept Exception as e:\n    # Error handling\n
-print(f'Error: {e}')\n"
+            return "try:\n    # Main code execution\n    pass\nexcept Exception as e:\n    # Error handling\n    print(f'Error: {e}')\n"
         return ""
 
     def _generate_documentation(self, analysis: Dict[str, Any]) -> str:
