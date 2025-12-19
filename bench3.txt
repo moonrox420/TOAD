@@ -1,0 +1,100 @@
+
+======================================================================
+TESTING: Simple Function
+======================================================================
+Requirements: 74 chars
+
+Complexity Score (calculated): 50
+
+Generating code...
+Generated: 14237 chars, 465 lines
+
+Measuring quality metrics...
+  Type Hints Ratio: 6.0%
+  Docstring Coverage: 77.8%
+  Error Handling Score: 100.0/100
+  Logging Score: 100.0/100
+  Code Organization: 100.0/100
+
+Code is Valid: True
+
+>>> REAL BENCHMARK SCORE: 74.38/100
+
+======================================================================
+TESTING: Medium Complexity
+======================================================================
+Requirements: 73 chars
+
+Complexity Score (calculated): 50
+
+Generating code...
+Generated: 17588 chars, 556 lines
+
+Measuring quality metrics...
+  Type Hints Ratio: 10.4%
+  Docstring Coverage: 80.0%
+  Error Handling Score: 100.0/100
+  Logging Score: 100.0/100
+  Code Organization: 100.0/100
+
+Code is Valid: True
+
+>>> REAL BENCHMARK SCORE: 79.04/100
+
+======================================================================
+TESTING: Complex REST API
+======================================================================
+Requirements: 222 chars
+
+Complexity Score (calculated): 100
+
+Generating code...
+Generated: 23270 chars, 713 lines
+
+Measuring quality metrics...
+  Type Hints Ratio: 10.7%
+  Docstring Coverage: 88.9%
+  Error Handling Score: 100.0/100
+  Logging Score: 100.0/100
+  Code Organization: 100.0/100
+
+Code is Valid: True
+
+>>> REAL BENCHMARK SCORE: 89.95/100
+
+======================================================================
+TESTING: Very Complex System
+======================================================================
+Requirements: 443 chars
+
+Complexity Score (calculated): 100
+
+Generating code...
+Generated: 23308 chars, 711 lines
+
+Measuring quality metrics...
+  Type Hints Ratio: 10.7%
+  Docstring Coverage: 88.9%
+  Error Handling Score: 100.0/100
+  Logging Score: 100.0/100
+  Code Organization: 100.0/100
+
+Code is Valid: True
+
+>>> REAL BENCHMARK SCORE: 89.96/100
+
+
+======================================================================
+FINAL BENCHMARK SUMMARY
+======================================================================
+
+Simple Function           | Score:  74.38/100 | Complexity:  50 | Lines:  465
+Medium Complexity         | Score:  79.04/100 | Complexity:  50 | Lines:  556
+Complex REST API          | Score:  89.95/100 | Complexity: 100 | Lines:  713
+Very Complex System       | Score:  89.96/100 | Complexity: 100 | Lines:  711
+
+Average Real Benchmark Score |  83.33/100
+Valid Code Generated      | True
+
+>>> YOUR AGENT'S REAL SCORE: 83.33/100
+======================================================================
