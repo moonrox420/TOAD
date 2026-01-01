@@ -3,7 +3,32 @@
 # Core dependencies (all required)
 aiosqlite>=0.17.0
 
+# =============================================================================
+# RAG (Retrieval-Augmented Generation) Dependencies
+# =============================================================================
+# These are required for the RAG index building and retrieval system
+
+# Vector store and similarity search
+faiss-cpu>=1.7.4                    # FAISS for vector indexing (use faiss-gpu for GPU)
+
+# Embedding generation
+sentence-transformers>=2.2.2         # For all-mpnet-base-v2 embeddings
+
+# HuggingFace datasets
+datasets>=2.14.0                     # For loading coding datasets from HF Hub
+
+# Numerical computing
+numpy>=1.24.0                        # Required by FAISS and sentence-transformers
+
+# Progress bars
+tqdm>=4.65.0                         # Progress bars for data loading
+
+# Configuration
+pyyaml>=6.0                          # YAML config file support
+
+# =============================================================================
 # Optional dependencies for enhanced features
+# =============================================================================
 # Uncomment as needed
 
 # For LLM integration (AI-powered code generation)
@@ -12,14 +37,20 @@ aiosqlite>=0.17.0
 
 # For machine learning features
 # scikit-learn>=1.2.0
-# numpy>=1.24.0
 # pandas>=1.5.0
 
 # For web UI
 # (no additional requirements - uses built-in http.server)
 
 # For development/testing
-# pytest>=7.0.0
-# pytest-asyncio>=0.20.0
+pytest>=7.0.0
+pytest-asyncio>=0.20.0
 # black>=23.0.0
 # flake8>=5.0.0
+
+# =============================================================================
+# GPU Support (Optional)
+# =============================================================================
+# For GPU-accelerated operations, install these instead:
+# pip install faiss-gpu                # GPU-accelerated FAISS
+# pip install torch                    # PyTorch for GPU embeddings
