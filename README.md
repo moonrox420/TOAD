@@ -232,6 +232,118 @@ Output: Complete, validated code
 
 ---
 
+## 🧠 RAG (Retrieval-Augmented Generation)
+
+### Overview
+
+The RAG system enhances code generation by retrieving relevant examples from elite coding datasets. This provides context-aware generation based on proven solutions.
+
+### Key Features
+
+- **Elite Coding Datasets**: Indexes 100k+ coding examples from HuggingFace
+- **Semantic Search**: Uses `all-mpnet-base-v2` embeddings (768 dimensions)
+- **FAISS Vector Index**: Fast similarity search with cosine similarity
+- **Seamless Integration**: Extends CodeGenerationAgent transparently
+
+### Quick Start with RAG
+
+#### 1. Install RAG Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+#### 2. Build the RAG Index
+
+```bash
+# Build index from HuggingFace datasets (one-time setup)
+python -c "from rag import build_rag_index; build_rag_index()"
+```
+
+#### 3. Use RAG-Enhanced Agent
+
+```python
+from rag import RAGEnhancedAgent
+
+# Create RAG-enhanced agent
+agent = RAGEnhancedAgent()
+
+# Generate code with RAG context
+code = agent.generate_code("Create a REST API with JWT authentication")
+
+# Get generation with full analysis
+result = agent.generate_code_with_analysis(
+    "Build a data processing pipeline with pandas"
+)
+print(f"RAG patterns detected: {result['rag_patterns']}")
+print(f"RAG context used: {result['rag_context_used']}")
+```
+
+### RAG Configuration
+
+```python
+from rag import RAGConfig, get_config
+
+# Get current config
+config = get_config()
+
+# Customize retrieval settings
+config.retrieval.top_k = 10  # Number of examples to retrieve
+config.retrieval.min_score = 0.4  # Minimum similarity threshold
+
+# Customize datasets
+config.datasets[0].enabled = False  # Disable specific dataset
+
+# Save custom config
+config.save()
+```
+
+### Available Datasets
+
+| Dataset | Examples | Description |
+|---------|----------|-------------|
+| Elite_GOD_Coder_100k | 100k | High-quality coding examples |
+| dolphin-coder | Varies | Gated dataset (requires HF login) |
+| OpenCodeInstruct | Large | NVIDIA instruction dataset |
+| codealpaca_20k | 20k | Code Alpaca training data |
+
+### RAG Module Structure
+
+```
+rag/
+├── __init__.py       # Module exports
+├── config.py         # Configuration management
+├── datasets.py       # HuggingFace dataset loading
+├── embedder.py       # Sentence-transformer embeddings
+├── indexer.py        # FAISS index building
+├── retriever.py      # Query and retrieval
+└── integration.py    # CodeGenerationAgent integration
+```
+
+### RAG API Reference
+
+```python
+# Build index
+from rag import build_rag_index
+stats = build_rag_index(max_chunks=50000)
+
+# Direct retrieval
+from rag import RAGRetriever
+retriever = RAGRetriever()
+results = retriever.retrieve("async FastAPI endpoint", top_k=5)
+for r in results:
+    print(f"Score: {r.score:.2f}, Source: {r.source}")
+
+# Format as context
+context = retriever.format_context(results)
+
+# Get detected patterns
+patterns = retriever.get_relevant_patterns(results)
+# ['api', 'async', 'type_hints', ...]
+```
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -242,7 +354,21 @@ code-boss/
 ├── LICENSE.md                    # Copyright & ownership
 ├── FINAL_ENHANCEMENT_SUMMARY.md  # Technical details of all upgrades
 ├── PERFORMANCE_SHOWCASE.md       # Executive summary with examples
-└── QUICK_REFERENCE.md            # Quick lookup guide
+├── QUICK_REFERENCE.md            # Quick lookup guide
+├── rag/                          # RAG module (NEW)
+│   ├── __init__.py              # Module exports
+│   ├── config.py                # Configuration
+│   ├── datasets.py              # Dataset loading
+│   ├── embedder.py              # Embeddings
+│   ├── indexer.py               # FAISS indexing
+│   ├── retriever.py             # Retrieval
+│   └── integration.py           # Agent integration
+├── rag_data/                     # RAG data directory
+│   ├── cache/                   # Dataset cache
+│   └── index/                   # FAISS index files
+└── tests/                        # Test suite
+    ├── test_config.py
+    └── test_rag.py
 ```
 
 ---
