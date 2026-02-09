@@ -790,14 +790,14 @@ async def get_{entity}() -> Dict[str, List[Dict[str, Any]]]:
 async def create_{entity}(item: Dict[str, Any]) -> Dict[str, Any]:
     """Create new {entity}"""
     logger: logging.Logger = logging.getLogger(__name__)
-    logger.info(f"Creating new {{entity}}")
+    logger.info(f"Creating new {entity}")
     return {{"id": 1, **item}}
 
 @app.get("/{entity}/{{item_id}}")
 async def get_{entity}_by_id(item_id: int) -> Dict[str, Any]:
     """Get {entity} by ID"""
     logger: logging.Logger = logging.getLogger(__name__)
-    logger.info(f"Fetching {{entity}} with id={{item_id}}")
+    logger.info(f"Fetching {entity} with id={{item_id}}")
     return {{"id": item_id}}
 ''')
         
@@ -1564,9 +1564,9 @@ SECURITY FEATURES:
 API ENDPOINTS:
     GET /api/v1/resources - List all resources
     POST /api/v1/resources - Create new resource
-    GET /api/v1/resources/{{id}} - Get resource by ID
-    PUT /api/v1/resources/{{id}} - Update resource
-    DELETE /api/v1/resources/{{id}} - Delete resource
+    GET /api/v1/resources/{id} - Get resource by ID
+    PUT /api/v1/resources/{id} - Update resource
+    DELETE /api/v1/resources/{id} - Delete resource
     GET /api/v1/health - Health check endpoint
 
 DATABASE:
@@ -1877,7 +1877,7 @@ def execute_main_logic() -> Any:
         
         # Type checking
         if not isinstance(data, {param_type.split('[')[0]}):
-            raise TypeError(f"Expected {{param_type}}, got {{type(data).__name__}}")
+            raise TypeError(f"Expected {param_type}, got {{type(data).__name__}}")
         
         # Implementation logic with detailed steps
         logger.debug(f"{func_name}: Starting data processing")
@@ -1932,7 +1932,7 @@ def execute_main_logic() -> Any:
         """Initialize {class_name}."""
         self.data: Dict[str, Any] = {{}}
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.info(f"Initializing {{self.__class__.__name__}}")
+        self.logger.info(f"Initializing {class_name}")
     
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -1967,28 +1967,28 @@ def execute_main_logic() -> Any:
     def _execute_processing(self) -> Dict[str, Any]:
         """Execute the core processing logic with real transformations."""
         try:
-            self.logger.debug(f"Processing {len(self.data)} items")
+            self.logger.debug(f"Processing {{len(self.data)}} items")
             
             # Add metadata
-            self.data['_metadata'] = {
+            self.data['_metadata'] = {{
                 'processed_at': datetime.now().isoformat(),
                 'processor': self.__class__.__name__,
                 'version': '1.0.0'
-            }
+            }}
             
             # Transform nested structures
             for data_key in list(self.data.keys()):
                 if isinstance(self.data[data_key], dict):
-                    self.data[f"{data_key}_enriched"] = {
+                    self.data[f"{{data_key}}_enriched"] = {{
                         'original': self.data[data_key],
                         'enriched': True,
                         'depth': self._calculate_depth(self.data[data_key])
-                    }
+                    }}
             
             self.logger.debug("Processing complete")
             return self.data
         except Exception as processing_error:
-            self.logger.error(f"Processing failed: {str(processing_error)}", exc_info=True)
+            self.logger.error(f"Processing failed: {{str(processing_error)}}", exc_info=True)
             raise
     
     def _calculate_depth(self, obj: Any, current_depth: int = 0) -> int:
@@ -2005,7 +2005,7 @@ def execute_main_logic() -> Any:
     
     def __repr__(self) -> str:
         """String representation of the object."""
-        return f"{{self.__class__.__name__}}(data_size={{len(self.data)}})"
+        return f"{class_name}(data_size={{len(self.data)}})"
 
 '''
             classes.append(cls)
