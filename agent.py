@@ -34,6 +34,10 @@ class CodeGenerationAgent:
 
         # Initialize core capabilities
         self._setup_capabilities()
+        
+        # Initialize RAG enhancement if available
+        self._rag_enhanced = None
+        self._setup_rag_enhancement()
 
     def _setup_capabilities(self):
         """Setup all agent capabilities"""
@@ -52,6 +56,27 @@ class CodeGenerationAgent:
         self.skills.add('multi_language_support')
         self.skills.add('real_time_processing')
         self.skills.add('memory_management')
+    
+    def _setup_rag_enhancement(self):
+        """Initialize RAG enhancement if available"""
+        try:
+            from rag.integration import RAGEnhancedAgent
+            # Create a RAG-enhanced wrapper with self as the base agent
+            self._rag_enhanced = RAGEnhancedAgent(base_agent=self, use_rag=True)
+            if self._rag_enhanced.rag_available:
+                logging.info(f"RAG enhancement enabled for {self.name}")
+                self.skills.add('rag_enhanced_generation')
+            else:
+                logging.info(f"RAG unavailable for {self.name}. Using fallback generation.")
+                self._rag_enhanced = None
+        except (ImportError, Exception) as e:
+            logging.info(f"RAG unavailable: {e}. Using fallback generation.")
+            self._rag_enhanced = None
+    
+    @property
+    def rag_available(self) -> bool:
+        """Check if RAG enhancement is available"""
+        return self._rag_enhanced is not None and self._rag_enhanced.rag_available
 
     def analyze_requirements(self, requirements: str) -> Dict[str, Any]:
         """Analyze requirements with maximum precision"""
@@ -344,6 +369,24 @@ class CodeGenerationAgent:
 
     def generate_code(self, requirements: str, context: Optional[Dict] = None, refinement_passes: int = 5) -> str:
         """Generate precise code based on requirements with multi-pass refinement (5 passes for maximum quality)"""
+        
+        # Try RAG-enhanced generation first if available
+        if self._rag_enhanced and self.rag_available:
+            try:
+                logging.info(f"Using RAG-enhanced generation for: {requirements[:50]}...")
+                return self._rag_enhanced.generate_code(
+                    requirements,
+                    context=context,
+                    refinement_passes=refinement_passes
+                )
+            except Exception as e:
+                logging.warning(f"RAG generation failed: {e}. Using fallback generation.")
+        
+        # Fallback to standard generation
+        return self._generate_code_fallback(requirements, context, refinement_passes)
+    
+    def _generate_code_fallback(self, requirements: str, context: Optional[Dict] = None, refinement_passes: int = 5) -> str:
+        """Fallback code generation without RAG (original implementation)"""
         self.current_task = requirements
         self.execution_log.append({
             'timestamp': datetime.now(),
