@@ -25,6 +25,17 @@ class CodeGenCLI:
         """Initialize the CLI with the appropriate agent."""
         self.agent_class = UnlimitedCodeAgent if use_unlimited else CodeGenerationAgent
         self.agent = self.agent_class()
+        
+        # Display RAG status
+        if hasattr(self.agent, 'rag_available'):
+            rag_status = "✓ ENABLED" if self.agent.rag_available else "✗ UNAVAILABLE"
+            print(f"RAG Enhancement: {rag_status}")
+            if self.agent.rag_available:
+                print("  → Using retrieval-augmented generation for better code quality")
+            else:
+                print("  → Using template-based fallback generation")
+                print("  → To enable RAG: Run 'python cli.py rag build' to create index")
+            print()
     
     def print_header(self, text: str) -> None:
         """Print a formatted header."""
@@ -42,6 +53,11 @@ class CodeGenCLI:
         self.print_header("CODE GENERATION")
         print(f"Requirements: {requirements}\n")
         
+        # Show RAG status
+        if hasattr(self.agent, 'rag_available'):
+            rag_status = "RAG-Enhanced" if self.agent.rag_available else "Template-Based"
+            print(f"Generation Mode: {rag_status}\n")
+        
         # Analyze requirements
         self.print_section("Analyzing Requirements")
         analysis = self.agent.analyze_requirements(requirements)
@@ -50,6 +66,11 @@ class CodeGenCLI:
         print(f"Code Type: {analysis['code_type']}")
         print(f"Detected Architecture: {analysis['architecture']}")
         print(f"Estimated Size: {analysis.get('estimated_size', 'N/A')}")
+        
+        # Show RAG info if available
+        if analysis.get('rag_enabled'):
+            print(f"RAG Examples: {analysis.get('rag_examples_count', 0)}")
+            print(f"RAG Patterns: {', '.join(analysis.get('rag_patterns', [])[:3])}")
         
         # Generate code
         self.print_section("Generating Code")
@@ -88,6 +109,8 @@ class CodeGenCLI:
         print(f"Code Length: {len(code):,} characters")
         print(f"Valid:       {validation['valid']}")
         print(f"Code Type:   {analysis['code_type']}")
+        if hasattr(self.agent, 'rag_available'):
+            print(f"RAG Used:    {self.agent.rag_available}")
     
     def analyze_command(self, requirements: str) -> None:
         """Analyze requirements without generating code."""

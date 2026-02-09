@@ -93,6 +93,12 @@ class CodeGenerationAgent:
             'priority_level': self._assign_priority(requirements),
             'resource_estimates': self._estimate_resources(requirements)
         }
+        
+        # Add code type and architecture detection for CLI display
+        analysis['code_type'] = self._detect_code_type(requirements, analysis)
+        analysis['architecture'] = self._determine_architecture(requirements, analysis)
+        analysis['estimated_size'] = f"{len(requirements) * 50}-{len(requirements) * 100} chars"
+        
         return analysis
 
     def _parse_requirements(self, requirements: str) -> Dict[str, Any]:
