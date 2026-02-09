@@ -94,8 +94,15 @@ class CodeGenCLI:
         validation = self.agent._validate_code(code)
         status = "✓ VALID" if validation['valid'] else "✗ INVALID"
         print(f"Status: {status}")
-        if validation['errors']:
-            print(f"Errors: {validation['errors']}")
+        if not validation['valid'] and validation.get('syntax_error'):
+            print(f"Syntax Error: {validation['syntax_error']}")
+        
+        # Show validation details
+        print(f"Type Hints: {validation.get('type_hint_count', 0)}")
+        print(f"Docstrings: {validation.get('docstring_count', 0)}")
+        print(f"Error Handling: {validation.get('error_handling_blocks', 0)}")
+        print(f"Functions: {validation.get('function_count', 0)}")
+        print(f"Classes: {validation.get('class_count', 0)}")
         
         # Save to file if requested
         if output_file:
