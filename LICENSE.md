@@ -1,16 +1,28 @@
 # Copyright License
 
-## Exclusive Ownership & Rights Declaration
+## Ownership Declaration
 
-**Copyright © 2025 Dustin Hill, DroxAI**
+**Copyright © 2025 moonrox420**
+
+**Original Repository**: https://github.com/moonrox420/TOAD
 
 ---
 
 ### Statement of Ownership
 
-This software, including all source code, documentation, configurations, and generated artifacts within this repository (hereinafter "the Code"), is the exclusive intellectual property of **Dustin Hill** operating under **DroxAI**.
+This software, including all source code, documentation, configurations, and generated artifacts within this repository (hereinafter "the Code"), is the intellectual property of **moonrox420**.
 
-**100% of all rights, titles, interests, and claims** to this Code are retained by and belong solely to Dustin Hill / DroxAI.
+All rights to this Code are retained by moonrox420.
+
+---
+
+### THEFT NOTICE
+
+**This code was STOLEN and copied without authorization to:**
+- **https://github.com/DarkShadow190922/EnterpriseAI-Local** (unauthorized copy by DarkShadow190922)
+- Rebranded as "DroxAI" with false copyright claims by "Dustin Hill"
+
+**moonrox420/TOAD is the ORIGINAL repository.** Any other repositories containing this code are unauthorized copies.
 
 ---
 
@@ -31,7 +43,13 @@ This copyright applies to and covers:
 
 ### Non-Affiliation Clause
 
-This Code is **NOT** affiliated with, endorsed by, maintained by, or the property of:
+This Code is **NOT** affiliated with, endorsed by, or the property of:
+- **"DarkShadow190922"** or **"EnterpriseAI-Local"** (STOLEN copy at https://github.com/DarkShadow190922/EnterpriseAI-Local)
+- **"DroxAI"** or **"Dustin Hill"** (false rebranding and copyright claims)
+- GitHub, Microsoft, OpenAI, or any AI model provider
+- Any third party whatsoever
+
+**ONLY moonrox420/TOAD is the legitimate source.**
 - GitHub (including GitHub Copilot or GitHub-hosted models)
 - Microsoft Corporation
 - Microsoft Azure
@@ -47,7 +65,7 @@ The Code may use services, models, or APIs from these entities, but such usage d
 
 ### Exclusive Rights
 
-Dustin Hill / DroxAI retains the exclusive right to:
+moonrox420 retains the exclusive right to:
 1. **Use** the Code for any purpose, personal or commercial
 2. **Modify** the Code at any time
 3. **Distribute** the Code under any terms deemed appropriate
@@ -96,12 +114,20 @@ This Code is provided as-is by Dustin Hill / DroxAI. Any use of this Code must c
 
 ### Contact & Permission
 
-For any questions regarding usage, licensing, distribution, or commercial exploitation of this Code, contact:
+For any questions regarding usage, licensing, distribution, or commercial exploitation of this Code, contact **moonrox420** through GitHub.
 
-**Dustin Hill**  
-**DroxAI**  
-Email: [dustinhill0590@droxaillc.com]  
-Phone: [Your contact phone]  
+---
+
+### Legal Notice
+
+**WARNING**: This repository's code was STOLEN and appears in unauthorized copies:
+
+1. **https://github.com/DarkShadow190922/EnterpriseAI-Local** - Stolen by DarkShadow190922 without permission
+2. **"DroxAI" branding by "Dustin Hill"** - False copyright claims over stolen code
+
+**The ONLY legitimate source is: https://github.com/moonrox420/TOAD**
+
+The true and original owner is **moonrox420**. Any claims by DarkShadow190922, "Dustin Hill", "DroxAI", or others are fraudulent.  
 
 ---
 
@@ -111,17 +137,17 @@ This copyright notice is effective as of **December 15, 2025** and applies retro
 
 ### Modification Rights
 
-Dustin Hill / DroxAI reserves the right to modify this license at any time. The most current version shall govern all uses of the Code.
+moonrox420 reserves the right to modify this license at any time.
 
 ---
 
 **Signed & Acknowledged:**
 
-**Dustin Hill**  
+**moonrox420**  
 Owner & Creator  
-DroxAI  
-December 15, 2025
+TOAD Project  
+2025
 
 ---
 
-*This license protects the intellectual property of Dustin Hill and DroxAI. Unauthorized reproduction or distribution is prohibited by law.*
+*This license protects the intellectual property of moonrox420. Unauthorized copying, rebranding (as "DroxAI" or otherwise), or distribution is prohibited by law.*

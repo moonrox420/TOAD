@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Setup configuration for DroxAI Code Generation Agent
+Setup configuration for TOAD Code Generation Agent
 
 Install with:
     pip install -e .
 
 Then use from anywhere:
-    droxai generate "Create a REST API"
-    droxai analyze "requirement"
-    droxai interactive
-    droxai benchmark
+    toad generate "Create a REST API"
+    toad analyze "requirement"
+    toad interactive
+    toad benchmark
 """
 
 from setuptools import setup, find_packages
@@ -20,15 +20,15 @@ readme_path = Path(__file__).parent / "README.md"
 long_description = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
 
 setup(
-    name="droxai-codegen",
+    name="toad-codegen",
     version="1.0.0",
-    description="DroxAI Code Generation Agent - AI-Powered Code Generation with 92.83/100 Performance",
+    description="TOAD Code Generation Agent - Take Over Any Directory with AI-Powered Code Generation",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Dustin Hill",
-    author_email="dustin@droxai.com",
+    author="moonrox420",
+    author_email="",
     url="https://github.com/moonrox420/TOAD",
-    license="Proprietary",
+    license="See LICENSE.md",
     
     # Package discovery
     packages=find_packages(),
@@ -37,9 +37,9 @@ setup(
     # Console scripts - makes commands available globally
     entry_points={
         'console_scripts': [
-            'droxai=cli:main',
-            'droxai-web=web_ui:main',
-            'droxai-tui=tui:main',
+            'toad=cli:main',
+            'toad-web=web_ui:main',
+            'toad-tui=tui:main',
         ],
     },
     
@@ -84,10 +84,9 @@ setup(
         "Programming Language :: Python :: 3.12",
     ],
     
-    keywords="code generation ai agent development productivity",
+    keywords="code generation ai agent development productivity toad",
     project_urls={
-        "Bug Reports": "https://github.com/moonrox420/TOAD/issues",
-        "Documentation": "https://github.com/moonrox420/TOAD#readme",
-        "Source Code": "https://github.com/moonrox420/TOAD",
+        "Source": "https://github.com/moonrox420/TOAD",
+        "Issues": "https://github.com/moonrox420/TOAD/issues",
     },
 )

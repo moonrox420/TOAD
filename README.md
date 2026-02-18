@@ -1,6 +1,6 @@
-# DroxAI Code Generation Agent
+# TOAD - Code Generation Agent
 
-**Intelligent, High-Performance Code Generation System**
+**Take Over Any Directory - Intelligent Code Generation System**
 
 A sophisticated AI-powered agent that generates production-ready code from natural language requirements. Built to exceed industry standards in code complexity, quality, and reliability.
 
@@ -8,7 +8,7 @@ A sophisticated AI-powered agent that generates production-ready code from natur
 
 ## 🎯 Overview
 
-DroxAI's Code Generation Agent is a state-of-the-art system designed to understand requirements and generate comprehensive, well-structured code automatically. It analyzes complexity, generates intelligent implementations, and validates output with enterprise-grade quality standards.
+TOAD is a state-of-the-art system designed to understand requirements and generate comprehensive, well-structured code automatically. It analyzes complexity, generates intelligent implementations, and validates output with enterprise-grade quality standards.
 
 **Performance Benchmark: 92.83/100** (Exceeds major AI assistants including GitHub Copilot)
 
@@ -66,7 +66,7 @@ Every generated file includes:
 
 ## 📊 Performance Comparison
 
-| Metric | DroxAI | GitHub Copilot | Difference |
+| Metric | TOAD | GitHub Copilot | Difference |
 |--------|--------|----------------|-----------|
 | **Overall Score** | 92.83/100 | 55/100 | **+37.83** |
 | **Web API Task** | 100/100 | 73/100 | **+27** |
