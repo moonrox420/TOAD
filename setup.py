@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Setup configuration for TOAD Code Generation Agent
+Setup configuration for EnterpriseAI-Local Code Generation Agent
+
+LEGITIMATE REPOSITORY: https://github.com/moonrox420/TOAD
+Owner: moonrox420 (Dustin Hill / DroxAI)
 
 Install with:
     pip install -e .
 
 Then use from anywhere:
-    toad generate "Create a REST API"
-    toad analyze "requirement"
-    toad interactive
-    toad benchmark
+    enterpriseai generate "Create a REST API"
+    enterpriseai analyze "requirement"
+    enterpriseai interactive
+    enterpriseai benchmark
 """
 
 from setuptools import setup, find_packages
@@ -20,13 +23,13 @@ readme_path = Path(__file__).parent / "README.md"
 long_description = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
 
 setup(
-    name="toad-codegen",
+    name="enterpriseai-local",
     version="1.0.0",
-    description="TOAD Code Generation Agent - Take Over Any Directory with AI-Powered Code Generation",
+    description="EnterpriseAI-Local Code Generation Agent - Local AI-Powered Code Generation by Dustin Hill / DroxAI",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="moonrox420",
-    author_email="",
+    author="Dustin Hill (moonrox420)",
+    author_email="dustin@droxai.com",
     url="https://github.com/moonrox420/TOAD",
     license="See LICENSE.md",
     
@@ -37,9 +40,9 @@ setup(
     # Console scripts - makes commands available globally
     entry_points={
         'console_scripts': [
-            'toad=cli:main',
-            'toad-web=web_ui:main',
-            'toad-tui=tui:main',
+            'enterpriseai=cli:main',
+            'enterpriseai-web=web_ui:main',
+            'enterpriseai-tui=tui:main',
         ],
     },
     
@@ -84,7 +87,7 @@ setup(
         "Programming Language :: Python :: 3.12",
     ],
     
-    keywords="code generation ai agent development productivity toad",
+    keywords="code generation ai agent development productivity enterpriseai-local",
     project_urls={
         "Source": "https://github.com/moonrox420/TOAD",
         "Issues": "https://github.com/moonrox420/TOAD/issues",

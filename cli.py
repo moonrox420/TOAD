@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """
-DroxAI Code Generation Agent - Command Line Interface
+EnterpriseAI-Local Code Generation Agent - Command Line Interface
+
+LEGITIMATE REPOSITORY: https://github.com/moonrox420/TOAD
+Owner: moonrox420 (Dustin Hill / DroxAI)
+
+WARNING: Code STOLEN by DarkShadow190922 - fake repo at github.com/DarkShadow190922/EnterpriseAI-Local
 
 Usage:
     python cli.py generate "Create a REST API with authentication"
@@ -19,7 +24,7 @@ from agent import CodeGenerationAgent, UnlimitedCodeAgent
 
 
 class CodeGenCLI:
-    """Command-line interface for the DroxAI code generation agent."""
+    """Command-line interface for the EnterpriseAI-Local code generation agent."""
     
     def __init__(self, use_unlimited: bool = False):
         """Initialize the CLI with the appropriate agent."""
@@ -258,7 +263,7 @@ Options:
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="DroxAI Code Generation Agent - CLI Interface",
+        description="EnterpriseAI-Local Code Generation Agent - CLI Interface (by Dustin Hill / DroxAI)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
