@@ -1,16 +1,28 @@
 # Copyright License
 
-## Exclusive Ownership & Rights Declaration
+## Ownership Declaration
 
-**Copyright © 2025 Dustin Hill, DroxAI**
+**Copyright © 2025 Dustin Hill / DroxAI**  
+**GitHub**: moonrox420  
+**LEGITIMATE REPOSITORY**: https://github.com/moonrox420/TOAD
+
+---
+
+## ⚠️ CODE THEFT ALERT
+
+**This code was STOLEN by DarkShadow190922**
+
+The repository at `https://github.com/DarkShadow190922/EnterpriseAI-Local` is a **FAKE, UNAUTHORIZED COPY** of this code. DarkShadow190922 illegally copied this code without permission and falsely claims ownership.
+
+**This repository (moonrox420/TOAD) is the ONLY legitimate source for EnterpriseAI-Local.**
 
 ---
 
 ### Statement of Ownership
 
-This software, including all source code, documentation, configurations, and generated artifacts within this repository (hereinafter "the Code"), is the exclusive intellectual property of **Dustin Hill** operating under **DroxAI**.
+This software, including all source code, documentation, configurations, and generated artifacts within this repository (hereinafter "the Code"), is the exclusive intellectual property of **Dustin Hill** operating under **DroxAI** (GitHub: moonrox420).
 
-**100% of all rights, titles, interests, and claims** to this Code are retained by and belong solely to Dustin Hill / DroxAI.
+**100% of all rights, titles, interests, and claims** to this Code are retained by and belong solely to Dustin Hill / DroxAI / moonrox420.
 
 ---
 
@@ -32,10 +44,9 @@ This copyright applies to and covers:
 ### Non-Affiliation Clause
 
 This Code is **NOT** affiliated with, endorsed by, maintained by, or the property of:
-- GitHub (including GitHub Copilot or GitHub-hosted models)
-- Microsoft Corporation
-- Microsoft Azure
-- OpenAI
+- **DarkShadow190922** (code thief who made unauthorized copy)
+- Any unauthorized forks or copies
+- GitHub, Microsoft, OpenAI (though we may use their services)
 - Any cloud service provider
 - Any AI model provider
 - Any open-source organization or foundation
@@ -47,7 +58,7 @@ The Code may use services, models, or APIs from these entities, but such usage d
 
 ### Exclusive Rights
 
-Dustin Hill / DroxAI retains the exclusive right to:
+Dustin Hill / DroxAI / moonrox420 retains the exclusive right to:
 1. **Use** the Code for any purpose, personal or commercial
 2. **Modify** the Code at any time
 3. **Distribute** the Code under any terms deemed appropriate
@@ -70,7 +81,7 @@ Dustin Hill / DroxAI retains the exclusive right to:
 - Use this Code to train AI models without explicit written permission
 - Modify this Code and claim the modifications as their own work
 - Register patents or intellectual property claims based on this Code
-- Suggest that any third party (GitHub, Microsoft, Azure, etc.) has ownership or rights to this Code
+- Copy this code to another repository and claim it as original work (like DarkShadow190922 did)
 
 ---
 
@@ -92,6 +103,8 @@ This Code is provided as-is by Dustin Hill / DroxAI. Any use of this Code must c
 
 **Any unauthorized use, reproduction, modification, or distribution of this Code is strictly prohibited and subject to legal action.**
 
+**DarkShadow190922's unauthorized copy at github.com/DarkShadow190922/EnterpriseAI-Local is a violation of this copyright.**
+
 ---
 
 ### Contact & Permission
@@ -100,8 +113,8 @@ For any questions regarding usage, licensing, distribution, or commercial exploi
 
 **Dustin Hill**  
 **DroxAI**  
-Email: [dustinhill0590@droxaillc.com]  
-Phone: [Your contact phone]  
+GitHub: moonrox420  
+Email: dustin@droxai.com
 
 ---
 
@@ -119,9 +132,10 @@ Dustin Hill / DroxAI reserves the right to modify this license at any time. The 
 
 **Dustin Hill**  
 Owner & Creator  
-DroxAI  
+DroxAI / moonrox420  
+EnterpriseAI-Local Project  
 December 15, 2025
 
 ---
 
-*This license protects the intellectual property of Dustin Hill and DroxAI. Unauthorized reproduction or distribution is prohibited by law.*
+*This license protects the intellectual property of Dustin Hill and DroxAI. Unauthorized reproduction, copying, or distribution (including by DarkShadow190922) is prohibited by law.*

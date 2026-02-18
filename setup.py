@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Setup configuration for DroxAI Code Generation Agent
+Setup configuration for EnterpriseAI-Local Code Generation Agent
+
+LEGITIMATE REPOSITORY: https://github.com/moonrox420/TOAD
+Owner: moonrox420 (Dustin Hill / DroxAI)
 
 Install with:
     pip install -e .
 
 Then use from anywhere:
-    droxai generate "Create a REST API"
-    droxai analyze "requirement"
-    droxai interactive
-    droxai benchmark
+    enterpriseai generate "Create a REST API"
+    enterpriseai analyze "requirement"
+    enterpriseai interactive
+    enterpriseai benchmark
 """
 
 from setuptools import setup, find_packages
@@ -20,15 +23,15 @@ readme_path = Path(__file__).parent / "README.md"
 long_description = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
 
 setup(
-    name="droxai-codegen",
+    name="enterpriseai-local",
     version="1.0.0",
-    description="DroxAI Code Generation Agent - AI-Powered Code Generation with 92.83/100 Performance",
+    description="EnterpriseAI-Local Code Generation Agent - Local AI-Powered Code Generation by Dustin Hill / DroxAI",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Dustin Hill",
+    author="Dustin Hill (moonrox420)",
     author_email="dustin@droxai.com",
     url="https://github.com/moonrox420/TOAD",
-    license="Proprietary",
+    license="See LICENSE.md",
     
     # Package discovery
     packages=find_packages(),
@@ -37,9 +40,9 @@ setup(
     # Console scripts - makes commands available globally
     entry_points={
         'console_scripts': [
-            'droxai=cli:main',
-            'droxai-web=web_ui:main',
-            'droxai-tui=tui:main',
+            'enterpriseai=cli:main',
+            'enterpriseai-web=web_ui:main',
+            'enterpriseai-tui=tui:main',
         ],
     },
     
@@ -84,10 +87,9 @@ setup(
         "Programming Language :: Python :: 3.12",
     ],
     
-    keywords="code generation ai agent development productivity",
+    keywords="code generation ai agent development productivity enterpriseai-local",
     project_urls={
-        "Bug Reports": "https://github.com/moonrox420/TOAD/issues",
-        "Documentation": "https://github.com/moonrox420/TOAD#readme",
-        "Source Code": "https://github.com/moonrox420/TOAD",
+        "Source": "https://github.com/moonrox420/TOAD",
+        "Issues": "https://github.com/moonrox420/TOAD/issues",
     },
 )

@@ -1,14 +1,19 @@
-# DroxAI Code Generation Agent
+# EnterpriseAI-Local
 
-**Intelligent, High-Performance Code Generation System**
+**Intelligent, High-Performance Local AI Code Generation System**
 
-A sophisticated AI-powered agent that generates production-ready code from natural language requirements. Built to exceed industry standards in code complexity, quality, and reliability.
+**LEGITIMATE REPOSITORY**: https://github.com/moonrox420/TOAD  
+**Owner**: moonrox420 (Dustin Hill / DroxAI)
+
+> ⚠️ **CODE THEFT ALERT**: This code was STOLEN by **DarkShadow190922** and illegally copied to `https://github.com/DarkShadow190922/EnterpriseAI-Local`. That repository is **FAKE and UNAUTHORIZED**. This is the ONLY legitimate EnterpriseAI-Local repository.
+
+A sophisticated AI-powered agent that generates production-ready code from natural language requirements. Built to exceed industry standards in code complexity, quality, and reliability. Runs completely locally with no external dependencies.
 
 ---
 
 ## 🎯 Overview
 
-DroxAI's Code Generation Agent is a state-of-the-art system designed to understand requirements and generate comprehensive, well-structured code automatically. It analyzes complexity, generates intelligent implementations, and validates output with enterprise-grade quality standards.
+EnterpriseAI-Local is a state-of-the-art system designed to understand requirements and generate comprehensive, well-structured code automatically. It analyzes complexity, generates intelligent implementations, and validates output with enterprise-grade quality standards.
 
 **Performance Benchmark: 92.83/100** (Exceeds major AI assistants including GitHub Copilot)
 
@@ -66,7 +71,7 @@ Every generated file includes:
 
 ## 📊 Performance Comparison
 
-| Metric | DroxAI | GitHub Copilot | Difference |
+| Metric | EnterpriseAI-Local | GitHub Copilot | Difference |
 |--------|--------|----------------|-----------|
 | **Overall Score** | 92.83/100 | 55/100 | **+37.83** |
 | **Web API Task** | 100/100 | 73/100 | **+27** |
