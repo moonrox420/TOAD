@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-DroxAI Code Generation Agent - Command Line Interface
+EnterpriseAI-Local Code Generation Agent - Command Line Interface
+
+Original Project: https://github.com/DarkShadow190922/EnterpriseAI-Local
 
 Usage:
     python cli.py generate "Create a REST API with authentication"
@@ -19,7 +21,7 @@ from agent import CodeGenerationAgent, UnlimitedCodeAgent
 
 
 class CodeGenCLI:
-    """Command-line interface for the DroxAI code generation agent."""
+    """Command-line interface for the EnterpriseAI-Local code generation agent."""
     
     def __init__(self, use_unlimited: bool = False):
         """Initialize the CLI with the appropriate agent."""
@@ -219,7 +221,7 @@ class CodeGenCLI:
     def _print_help(self) -> None:
         """Print help text."""
         help_text = """
-DroxAI Code Generation Agent - Commands
+EnterpriseAI-Local Code Generation Agent - Commands
 
   generate <requirement>      Generate code from requirements
   analyze <requirement>       Analyze requirements without generating
@@ -258,7 +260,7 @@ Options:
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="DroxAI Code Generation Agent - CLI Interface",
+        description="EnterpriseAI-Local Code Generation Agent - CLI Interface (Original: github.com/DarkShadow190922/EnterpriseAI-Local)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
