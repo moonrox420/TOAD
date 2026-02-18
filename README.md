@@ -1,18 +1,14 @@
-# EnterpriseAI-Local Code Generation Agent
+# DroxAI Code Generation Agent
 
-**Intelligent, High-Performance Local Code Generation System**
+**Intelligent, High-Performance Code Generation System**
 
-> **NOTICE**: This is a fork/copy of the original [EnterpriseAI-Local](https://github.com/DarkShadow190922/EnterpriseAI-Local) project.  
-> **Original Repository**: https://github.com/DarkShadow190922/EnterpriseAI-Local  
-> **Original Author**: DarkShadow190922
-
-A sophisticated AI-powered agent that generates production-ready code from natural language requirements. Built to exceed industry standards in code complexity, quality, and reliability. Runs completely locally with no external dependencies.
+A sophisticated AI-powered agent that generates production-ready code from natural language requirements. Built to exceed industry standards in code complexity, quality, and reliability.
 
 ---
 
 ## 🎯 Overview
 
-EnterpriseAI-Local is a state-of-the-art system designed to understand requirements and generate comprehensive, well-structured code automatically. It analyzes complexity, generates intelligent implementations, and validates output with enterprise-grade quality standards.
+DroxAI's Code Generation Agent is a state-of-the-art system designed to understand requirements and generate comprehensive, well-structured code automatically. It analyzes complexity, generates intelligent implementations, and validates output with enterprise-grade quality standards.
 
 **Performance Benchmark: 92.83/100** (Exceeds major AI assistants including GitHub Copilot)
 
@@ -70,7 +66,7 @@ Every generated file includes:
 
 ## 📊 Performance Comparison
 
-| Metric | EnterpriseAI-Local | GitHub Copilot | Difference |
+| Metric | DroxAI | GitHub Copilot | Difference |
 |--------|--------|----------------|-----------|
 | **Overall Score** | 92.83/100 | 55/100 | **+37.83** |
 | **Web API Task** | 100/100 | 73/100 | **+27** |

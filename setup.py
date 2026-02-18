@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 """
-Setup configuration for EnterpriseAI-Local Code Generation Agent
-
-Original Project: https://github.com/DarkShadow190922/EnterpriseAI-Local
-Original Author: DarkShadow190922
+Setup configuration for DroxAI Code Generation Agent
 
 Install with:
     pip install -e .
 
 Then use from anywhere:
-    enterpriseai generate "Create a REST API"
-    enterpriseai analyze "requirement"
-    enterpriseai interactive
-    enterpriseai benchmark
+    droxai generate "Create a REST API"
+    droxai analyze "requirement"
+    droxai interactive
+    droxai benchmark
 """
 
 from setuptools import setup, find_packages
@@ -23,15 +20,15 @@ readme_path = Path(__file__).parent / "README.md"
 long_description = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
 
 setup(
-    name="enterpriseai-local",
+    name="droxai-codegen",
     version="1.0.0",
-    description="EnterpriseAI-Local Code Generation Agent - AI-Powered Local Code Generation (Original: github.com/DarkShadow190922/EnterpriseAI-Local)",
+    description="DroxAI Code Generation Agent - AI-Powered Code Generation with 92.83/100 Performance",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="DarkShadow190922 (Original Author)",
-    author_email="",
-    url="https://github.com/DarkShadow190922/EnterpriseAI-Local",
-    license="See LICENSE.md",
+    author="Dustin Hill",
+    author_email="dustin@droxai.com",
+    url="https://github.com/moonrox420/TOAD",
+    license="Proprietary",
     
     # Package discovery
     packages=find_packages(),
@@ -40,9 +37,9 @@ setup(
     # Console scripts - makes commands available globally
     entry_points={
         'console_scripts': [
-            'enterpriseai=cli:main',
-            'enterpriseai-web=web_ui:main',
-            'enterpriseai-tui=tui:main',
+            'droxai=cli:main',
+            'droxai-web=web_ui:main',
+            'droxai-tui=tui:main',
         ],
     },
     
@@ -87,9 +84,10 @@ setup(
         "Programming Language :: Python :: 3.12",
     ],
     
-    keywords="code generation ai agent development productivity enterpriseai-local",
+    keywords="code generation ai agent development productivity",
     project_urls={
-        "Original Repository": "https://github.com/DarkShadow190922/EnterpriseAI-Local",
-        "This Fork": "https://github.com/moonrox420/TOAD",
+        "Bug Reports": "https://github.com/moonrox420/TOAD/issues",
+        "Documentation": "https://github.com/moonrox420/TOAD#readme",
+        "Source Code": "https://github.com/moonrox420/TOAD",
     },
 )

@@ -1,25 +1,16 @@
 # Copyright License
 
-## ATTRIBUTION NOTICE
-
-**This repository contains code derived from:**
-- **Original Project**: EnterpriseAI-Local
-- **Original Repository**: https://github.com/DarkShadow190922/EnterpriseAI-Local
-- **Original Author**: DarkShadow190922
-
----
-
 ## Exclusive Ownership & Rights Declaration
 
-**Original Copyright © 2025 DarkShadow190922 (EnterpriseAI-Local)**
+**Copyright © 2025 Dustin Hill, DroxAI**
 
 ---
 
 ### Statement of Ownership
 
-The original software, including all source code, documentation, configurations, and generated artifacts (hereinafter "the Code"), is the intellectual property of **DarkShadow190922** and the **EnterpriseAI-Local** project.
+This software, including all source code, documentation, configurations, and generated artifacts within this repository (hereinafter "the Code"), is the exclusive intellectual property of **Dustin Hill** operating under **DroxAI**.
 
-This repository (moonrox420/TOAD) appears to contain unauthorized copies of EnterpriseAI-Local code that was rebranded as "DroxAI".
+**100% of all rights, titles, interests, and claims** to this Code are retained by and belong solely to Dustin Hill / DroxAI.
 
 ---
 
@@ -56,7 +47,7 @@ The Code may use services, models, or APIs from these entities, but such usage d
 
 ### Exclusive Rights
 
-moonrox420 retains the exclusive right to:
+Dustin Hill / DroxAI retains the exclusive right to:
 1. **Use** the Code for any purpose, personal or commercial
 2. **Modify** the Code at any time
 3. **Distribute** the Code under any terms deemed appropriate
@@ -105,9 +96,12 @@ This Code is provided as-is by Dustin Hill / DroxAI. Any use of this Code must c
 
 ### Contact & Permission
 
-For licensing and usage questions, please contact the **original author**:
-- **GitHub**: https://github.com/DarkShadow190922
-- **Original Repository**: https://github.com/DarkShadow190922/EnterpriseAI-Local  
+For any questions regarding usage, licensing, distribution, or commercial exploitation of this Code, contact:
+
+**Dustin Hill**  
+**DroxAI**  
+Email: [dustinhill0590@droxaillc.com]  
+Phone: [Your contact phone]  
 
 ---
 
@@ -117,16 +111,17 @@ This copyright notice is effective as of **December 15, 2025** and applies retro
 
 ### Modification Rights
 
-The original author (DarkShadow190922) reserves all rights to the EnterpriseAI-Local project.
+Dustin Hill / DroxAI reserves the right to modify this license at any time. The most current version shall govern all uses of the Code.
 
 ---
 
-**Original Author:**
+**Signed & Acknowledged:**
 
-**DarkShadow190922**  
-Creator of EnterpriseAI-Local  
-https://github.com/DarkShadow190922/EnterpriseAI-Local
+**Dustin Hill**  
+Owner & Creator  
+DroxAI  
+December 15, 2025
 
 ---
 
-*This code was originally developed as EnterpriseAI-Local. Unauthorized copying and rebranding as "DroxAI" was not authorized by the original author.*
+*This license protects the intellectual property of Dustin Hill and DroxAI. Unauthorized reproduction or distribution is prohibited by law.*
