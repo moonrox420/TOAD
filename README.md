@@ -568,6 +568,30 @@ code = agent.generate_code(
 
 ---
 
+## 🛠️ Troubleshooting
+
+### ⚠️ Do NOT install the `rag` package from PyPI
+
+This project ships a **local `rag/` module** (the `rag/` directory at the root of the repo). It does **not** depend on the third-party PyPI package also named `rag`.
+
+The PyPI `rag` package pulls in legacy dependencies — including Celery 5.0.x releases with broken package metadata and `pathtools` which requires the removed `imp` module — and **fails to install under current pip versions**, especially on Windows.
+
+**Never run:**
+```bash
+pip install rag   # ← DO NOT do this
+```
+
+**If you have already installed it by mistake, remove it:**
+```bash
+pip uninstall rag
+```
+
+The local `rag/` directory is imported directly by Python without any PyPI installation. All required dependencies are listed in `requirements.txt`.
+
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for more details.
+
+---
+
 ## 📞 Support & Contact
 
 For questions, issues, or licensing inquiries:
