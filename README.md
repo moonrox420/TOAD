@@ -81,6 +81,54 @@ Every generated file includes:
 
 ---
 
+## 🤖 LLM Integration (`enhanced_rag_system.py`)
+
+The `EnhancedRAGSystem` optionally layers a Hugging Face LLM on top of the
+rule-based agent and the RAG index.
+
+### Default model
+
+The default model is **`mistralai/Mistral-7B-Instruct-v0.2`** – a fully
+public model that requires no special access.
+
+### Changing the model
+
+Set the `MCFG_LLM` environment variable before running:
+
+```bash
+export MCFG_LLM="tiiuae/falcon-7b-instruct"          # another public option
+export MCFG_LLM="meta-llama/Meta-Llama-3.1-8B-Instruct"  # gated – see below
+```
+
+### Gated / restricted models
+
+Some models (e.g. `meta-llama/*`) require:
+1. A Hugging Face account with access granted at
+   `https://huggingface.co/<model-id>`
+2. A valid API token exported as `HUGGING_FACE_HUB_TOKEN`:
+
+```bash
+export HUGGING_FACE_HUB_TOKEN="hf_your_token_here"
+# or authenticate once via:
+huggingface-cli login
+```
+
+If the chosen model cannot be loaded (wrong token, no access, network error,
+etc.) the system logs a warning and automatically falls back to the
+rule-based `CodeGenerationAgent` – code generation continues uninterrupted.
+
+### Quick usage
+
+```python
+from enhanced_rag_system import create_enhanced_rag_system
+
+system = create_enhanced_rag_system()           # uses default / MCFG_LLM
+code   = system.generate_code("Create a REST API with authentication")
+print(system.get_status())                      # shows which backends are active
+```
+
+---
+
 ## 🚀 Quick Start
 
 ### Installation
