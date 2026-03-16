@@ -35,6 +35,15 @@ pyyaml>=6.0                          # YAML config file support
 # openai>=0.27.0
 # anthropic>=0.3.0
 
+# For local GGUF model support via llama.cpp (enhanced_rag_system.py)
+# Set LOCAL_GGUF_MODEL env var to a .gguf file path to activate this backend.
+# See TROUBLESHOOTING.md for build options (CUDA, Metal, CPU-only).
+# llama-cpp-python>=0.2.0
+
+# For Transformers / HuggingFace backend (enhanced_rag_system.py default)
+# transformers>=4.35.0
+# torch>=2.0.0
+
 # For machine learning features
 # scikit-learn>=1.2.0
 # pandas>=1.5.0
