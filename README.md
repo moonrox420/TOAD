@@ -558,6 +558,43 @@ code = agent.generate_code(
 
 ---
 
+## 🛠️ Troubleshooting
+
+> See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for the full guide.
+
+### Using a local GGUF model (avoid the ~14.5 GB HuggingFace download)
+
+`enhanced_rag_system.py` supports two LLM backends:
+
+| Backend | When used | Notes |
+|---------|-----------|-------|
+| **llama-cpp-python** | `LOCAL_GGUF_MODEL` env var is set | No HF download; uses your local `.gguf` file |
+| **HuggingFace Transformers** | Default (env var not set) | Downloads `Mistral-7B-Instruct-v0.2` (~14.5 GB on first run) |
+
+```bash
+# Use a local GGUF model – skips the HuggingFace download entirely
+export LOCAL_GGUF_MODEL=/path/to/mistral-7b-instruct.Q4_K_M.gguf
+python enhanced_rag_system.py
+
+# Install llama-cpp-python first if you haven't already
+pip install llama-cpp-python
+```
+
+### `torch_dtype` deprecation warning
+
+If another script passes `torch_dtype=…` to `AutoModelForCausalLM.from_pretrained`
+you will see:
+
+```
+UserWarning: `torch_dtype` is deprecated! Use `dtype` instead!
+```
+
+This warning can be **safely ignored** for `enhanced_rag_system.py` – it already
+uses the current `dtype=…` parameter.  For any other script, replace
+`torch_dtype=torch.float16` with `dtype=torch.float16`.
+
+---
+
 ## 🚨 Important Notes
 
 - Generated code is **production-ready** but should be reviewed and tested for your specific use case
