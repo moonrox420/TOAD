@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).parent.parent
 RAG_DATA_DIR = BASE_DIR / "rag_data"
 
+# Default HF model name for GGUF inference (used by LLMConfig)
+DEFAULT_HF_MODEL_NAME = "BlossomsAI/Qwen2.5-Coder-14B-Instruct-Uncensored-GGUF"
+
 
 @dataclass
 class DatasetConfig:
@@ -82,6 +85,34 @@ class PathConfig:
 
 
 @dataclass
+class LLMConfig:
+    """
+    Configuration for the local or hosted LLM used for inference.
+
+    When ``local_model_path`` is set (or the ``LOCAL_MODEL_PATH`` environment
+    variable is present) the system loads that GGUF file via llama-cpp-python
+    and runs inference locally.  When it is ``None`` the system falls back to
+    a HuggingFace-hosted model specified by ``hf_model_name``.
+
+    Attributes:
+        local_model_path: Absolute path to a local ``.gguf`` model file.
+            Overridden by the ``LOCAL_MODEL_PATH`` environment variable.
+        hf_model_name: HuggingFace model repo used when no local path is set.
+        n_ctx: Context-window size passed to llama-cpp-python (tokens).
+        n_gpu_layers: Number of transformer layers to offload to the GPU.
+            Set to ``-1`` to offload all layers (requires a CUDA/Metal build).
+        max_tokens: Maximum tokens to generate in a single inference call.
+        temperature: Sampling temperature (0.0 = deterministic).
+    """
+    local_model_path: Optional[str] = None
+    hf_model_name: str = DEFAULT_HF_MODEL_NAME
+    n_ctx: int = 4096
+    n_gpu_layers: int = 0
+    max_tokens: int = 2048
+    temperature: float = 0.2
+
+
+@dataclass
 class RAGConfig:
     """
     Main configuration class for the RAG system.
@@ -92,12 +123,14 @@ class RAGConfig:
         index: FAISS index configuration
         retrieval: Retrieval settings
         paths: File path configuration
+        llm: LLM inference configuration (local GGUF or HF-hosted)
     """
     embedding: EmbeddingConfig = field(default_factory=EmbeddingConfig)
     datasets: List[DatasetConfig] = field(default_factory=list)
     index: IndexConfig = field(default_factory=IndexConfig)
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
     paths: PathConfig = field(default_factory=PathConfig)
+    llm: LLMConfig = field(default_factory=LLMConfig)
     
     def __post_init__(self):
         """Initialize default datasets if none provided."""
@@ -147,6 +180,14 @@ class RAGConfig:
                 "cache_dir": str(self.paths.cache_dir),
                 "index_dir": str(self.paths.index_dir),
             },
+            "llm": {
+                "local_model_path": self.llm.local_model_path,
+                "hf_model_name": self.llm.hf_model_name,
+                "n_ctx": self.llm.n_ctx,
+                "n_gpu_layers": self.llm.n_gpu_layers,
+                "max_tokens": self.llm.max_tokens,
+                "temperature": self.llm.temperature,
+            },
         }
     
     def save(self, path: Optional[Path] = None) -> None:
@@ -195,12 +236,23 @@ class RAGConfig:
             index_dir=Path(paths_data.get("index_dir", RAG_DATA_DIR / "index")),
         )
         
+        llm_data = data.get("llm", {})
+        llm = LLMConfig(
+            local_model_path=llm_data.get("local_model_path"),
+            hf_model_name=llm_data.get("hf_model_name", DEFAULT_HF_MODEL_NAME),
+            n_ctx=llm_data.get("n_ctx", 4096),
+            n_gpu_layers=llm_data.get("n_gpu_layers", 0),
+            max_tokens=llm_data.get("max_tokens", 2048),
+            temperature=llm_data.get("temperature", 0.2),
+        )
+        
         return cls(
             embedding=embedding,
             datasets=datasets,
             index=index,
             retrieval=retrieval,
             paths=paths,
+            llm=llm,
         )
     
     @classmethod
@@ -282,6 +334,9 @@ def get_config(reload: bool = False) -> RAGConfig:
             _config.paths.data_dir = Path(os.environ["RAG_DATA_DIR"])
             _config.paths.cache_dir = _config.paths.data_dir / "cache"
             _config.paths.index_dir = _config.paths.data_dir / "index"
+        
+        if os.environ.get("LOCAL_MODEL_PATH"):
+            _config.llm.local_model_path = os.environ["LOCAL_MODEL_PATH"]
     
     return _config
 
