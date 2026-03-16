@@ -24,7 +24,7 @@ Usage:
     code = agent.generate_code("Create a REST API with authentication")
 """
 
-from .config import RAGConfig, get_config
+from .config import RAGConfig, get_config, LLMConfig, DEFAULT_HF_MODEL_NAME
 from .datasets import CodingDatasetLoader
 from .embedder import CodeEmbedder
 from .indexer import RAGIndexBuilder, build_rag_index
@@ -33,6 +33,8 @@ from .integration import RAGEnhancedAgent
 
 __all__ = [
     "RAGConfig",
+    "LLMConfig",
+    "DEFAULT_HF_MODEL_NAME",
     "get_config",
     "CodingDatasetLoader",
     "CodeEmbedder",
