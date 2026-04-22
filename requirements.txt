@@ -31,6 +31,16 @@ pyyaml>=6.0                          # YAML config file support
 # =============================================================================
 # Uncomment as needed
 
+# For local GGUF model inference (skips HuggingFace ~14.5 GB download)
+# Set LOCAL_GGUF_MODEL=/path/to/model.gguf and install this instead of
+# the transformers/torch stack.  See TROUBLESHOOTING.md for details.
+# llama-cpp-python>=0.2.0
+
+# For HuggingFace Transformers LLM backend (default in enhanced_rag_system.py)
+# Required when LOCAL_GGUF_MODEL is NOT set.
+# transformers>=4.35.0
+# torch>=2.0.0
+
 # For LLM integration (AI-powered code generation)
 # openai>=0.27.0
 # anthropic>=0.3.0
