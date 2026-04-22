@@ -175,6 +175,7 @@ class CodeGenerator:
         elif 'count' in funcs:
             return self._py_count(req)
         elif 'parse' in funcs or 'json' in req:
+        elif 'parse' in funcs and 'json' in req:
             return self._py_json_parse(req)
         elif 'validate' in funcs:
             return self._py_validate(req)
@@ -616,6 +617,7 @@ int main() {{
 '''
         else:
             return f'''/* Linear search implementation - {req} */
+        return f'''/* Search implementation - {req} */
 #include <stdio.h>
 
 int linear_search(int arr[], int n, int target) {{
@@ -917,6 +919,8 @@ export {{ solve }};
             return self._rust_count(req)
         elif 'merge' in funcs:
             return self._rust_merge(req)
+        elif 'sum' in funcs:
+            return self._rust_math(req)
         else:
             return self._rust_generic(req)
     
@@ -997,6 +1001,10 @@ fn main() {{
     let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let total = sum_data(&data);
     let avg = average_data(&data);
+fn main() {{
+    let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let total = sum_data(&data);
+    let avg = total as f64 / data.len() as f64;
     println!("Sum: {{}}, Average: {{:.2}}", total, avg);
 }}
 '''
@@ -1106,6 +1114,11 @@ fn solve<T: std::fmt::Debug>(data: T) -> T {{
 fn main() {{
     let result = solve("sample input");
     println!("Result: {{:?}}", result);
+    def _rust_generic(self, req: str) -> str:
+        return f'''// Solution for: {req}
+
+fn main() {{
+    println!("Implementation for: {req}");
 }}
 '''
 
