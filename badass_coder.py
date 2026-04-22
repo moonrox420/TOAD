@@ -174,6 +174,7 @@ class CodeGenerator:
             return self._py_math(req, funcs)
         elif 'count' in funcs:
             return self._py_count(req)
+        elif 'parse' in funcs or 'json' in req:
         elif 'parse' in funcs and 'json' in req:
             return self._py_json_parse(req)
         elif 'validate' in funcs:
@@ -579,6 +580,43 @@ int main() {{
 '''
     
     def _c_search(self, req: str) -> str:
+        use_binary = 'binary' in req.lower() or 'sorted' in req.lower()
+        
+        if use_binary:
+            return f'''/* Binary search implementation - {req} */
+#include <stdio.h>
+
+int binary_search(int arr[], int n, int target) {{
+    int left = 0, right = n - 1;
+    while (left <= right) {{
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target)
+            return mid;
+        if (arr[mid] < target)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }}
+    return -1;
+}}
+
+int main() {{
+    int arr[] = {{1, 2, 3, 4, 5, 6, 7, 8, 9}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int target = 6;
+    
+    int result = binary_search(arr, n, target);
+    
+    if (result != -1)
+        printf("Found %d at index %d\\n", target, result);
+    else
+        printf("%d not found\\n", target);
+    
+    return 0;
+}}
+'''
+        else:
+            return f'''/* Linear search implementation - {req} */
         return f'''/* Search implementation - {req} */
 #include <stdio.h>
 
@@ -672,6 +710,16 @@ int main() {{
             return self._js_map(req, is_ts)
         elif 'search' in funcs or 'find' in funcs:
             return self._js_search(req, is_ts)
+        elif 'reverse' in funcs:
+            return self._js_reverse(req, is_ts)
+        elif 'sum' in funcs or 'average' in funcs:
+            return self._js_math(req, is_ts)
+        elif 'count' in funcs:
+            return self._js_count(req, is_ts)
+        elif 'validate' in funcs:
+            return self._js_validate(req, is_ts)
+        elif 'merge' in funcs:
+            return self._js_merge(req, is_ts)
         else:
             return self._js_generic(req, is_ts)
     
@@ -735,6 +783,111 @@ console.log(index !== -1 ? `Found at index ${{index}}` : "Not found");
 export {{ searchData }};
 '''
     
+    def _js_reverse(self, req: str, is_ts: bool) -> str:
+        return f'''// Reverse implementation - {req}
+
+function reverseString(str) {{
+    return str.split('').reverse().join('');
+}}
+
+function reverseArray(arr) {{
+    return [...arr].reverse();
+}}
+
+const text = "hello world";
+console.log("Reversed:", reverseString(text));
+
+const nums = [1, 2, 3, 4, 5];
+console.log("Reversed array:", reverseArray(nums));
+
+export {{ reverseString, reverseArray }};
+'''
+    
+    def _js_math(self, req: str, is_ts: bool) -> str:
+        return f'''// Math operations - {req}
+
+function sumData(data) {{
+    return data.reduce((a, b) => a + b, 0);
+}}
+
+function averageData(data) {{
+    if (data.length === 0) return 0;
+    return sumData(data) / data.length;
+}}
+
+const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+console.log("Sum:", sumData(data));
+console.log("Average:", averageData(data));
+
+export {{ sumData, averageData }};
+'''
+    
+    def _js_count(self, req: str, is_ts: bool) -> str:
+        return f'''// Count implementation - {req}
+
+function countOccurrences(data, target) {{
+    return data.filter(x => x === target).length;
+}}
+
+function countTotal(data) {{
+    return data.length;
+}}
+
+const data = ["apple", "banana", "apple", "orange", "apple"];
+const target = "apple";
+console.log(`${{target}} appears ${{countOccurrences(data, target)}} times`);
+console.log("Total items:", countTotal(data));
+
+export {{ countOccurrences, countTotal }};
+'''
+    
+    def _js_validate(self, req: str, is_ts: bool) -> str:
+        return f'''// Validation implementation - {req}
+
+function validateEmail(email) {{
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$/;
+    return re.test(email);
+}}
+
+function validateNotEmpty(str) {{
+    return str && str.trim().length > 0;
+}}
+
+const emails = ["test@example.com", "invalid.email", "user@domain.org"];
+emails.forEach(email => {{
+    console.log(`${{email}}: ${{validateEmail(email) ? "Valid" : "Invalid"}}`);
+}});
+
+export {{ validateEmail, validateNotEmpty }};
+'''
+    
+    def _js_merge(self, req: str, is_ts: bool) -> str:
+        return f'''// Merge implementation - {req}
+
+function mergeArrays(arr1, arr2) {{
+    return [...arr1, ...arr2];
+}}
+
+function mergeUnique(arr1, arr2) {{
+    return [...new Set([...arr1, ...arr2])];
+}}
+
+function mergeObjects(obj1, obj2) {{
+    return {{ ...obj1, ...obj2 }};
+}}
+
+const a1 = [1, 2, 3];
+const a2 = [3, 4, 5];
+console.log("Merged:", mergeArrays(a1, a2));
+console.log("Merged (unique):", mergeUnique(a1, a2));
+
+const o1 = {{ a: 1, b: 2 }};
+const o2 = {{ c: 3, d: 4 }};
+console.log("Merged objects:", mergeObjects(o1, o2));
+
+export {{ mergeArrays, mergeUnique, mergeObjects }};
+'''
+    
     def _js_generic(self, req: str, is_ts: bool) -> str:
         return f'''// Solution for: {req}
 
@@ -756,6 +909,16 @@ export {{ solve }};
             return self._rust_search(req)
         elif 'filter' in funcs:
             return self._rust_filter(req)
+        elif 'sum' in funcs or 'average' in funcs:
+            return self._rust_math(req)
+        elif 'validate' in funcs:
+            return self._rust_validate(req)
+        elif 'reverse' in funcs:
+            return self._rust_reverse(req)
+        elif 'count' in funcs:
+            return self._rust_count(req)
+        elif 'merge' in funcs:
+            return self._rust_merge(req)
         elif 'sum' in funcs:
             return self._rust_math(req)
         else:
@@ -826,6 +989,18 @@ fn sum_data(data: &[i32]) -> i32 {{
     data.iter().sum()
 }}
 
+fn average_data(data: &[i32]) -> f64 {{
+    if data.is_empty() {{
+        return 0.0;
+    }}
+    let total: i32 = data.iter().sum();
+    total as f64 / data.len() as f64
+}}
+
+fn main() {{
+    let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let total = sum_data(&data);
+    let avg = average_data(&data);
 fn main() {{
     let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let total = sum_data(&data);
@@ -834,6 +1009,111 @@ fn main() {{
 }}
 '''
     
+    def _rust_validate(self, req: str) -> str:
+        return f'''// Validation implementation - {req}
+
+fn validate_email(email: &str) -> bool {{
+    let re = regex::Regex::new(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$").unwrap();
+    re.is_match(email)
+}}
+
+fn validate_not_empty(s: &str) -> bool {{
+    !s.trim().is_empty()
+}}
+
+fn main() {{
+    let emails = vec!["test@example.com", "invalid.email", "user@domain.org"];
+    
+    for email in emails {{
+        let valid = validate_email(email);
+        println!("{{}}: {{}}", email, if valid {{ "Valid" }} else {{ "Invalid" }});
+    }}
+}}
+'''
+    
+    def _rust_reverse(self, req: str) -> str:
+        return f'''// Reverse implementation - {req}
+
+fn reverse_string(s: &str) -> String {{
+    s.chars().rev().collect()
+}}
+
+fn reverse_vec<T: Clone>(data: &[T]) -> Vec<T> {{
+    data.iter().rev().cloned().collect()
+}}
+
+fn main() {{
+    let text = "hello world";
+    let reversed = reverse_string(text);
+    println!("Original: {{}}, Reversed: {{}}", text, reversed);
+    
+    let nums = vec![1, 2, 3, 4, 5];
+    let reversed_nums = reverse_vec(&nums);
+    println!("Original: {{:?}}, Reversed: {{:?}}", nums, reversed_nums);
+}}
+'''
+    
+    def _rust_count(self, req: str) -> str:
+        return f'''// Count implementation - {req}
+
+fn count_occurrences<T: PartialEq>(data: &[T], target: &T) -> usize {{
+    data.iter().filter(|&x| x == target).count()
+}}
+
+fn count_total<T>(data: &[T]) -> usize {{
+    data.len()
+}}
+
+fn main() {{
+    let data = vec!["apple", "banana", "apple", "orange", "apple"];
+    let target = "apple";
+    
+    let count = count_occurrences(&data, &target);
+    println!("{{}} appears {{}} times", target, count);
+    
+    let total = count_total(&data);
+    println!("Total items: {{}}", total);
+}}
+'''
+    
+    def _rust_merge(self, req: str) -> str:
+        return f'''// Merge implementation - {req}
+
+fn merge_vectors<T: Clone>(v1: &[T], v2: &[T]) -> Vec<T> {{
+    v1.iter().chain(v2.iter()).cloned().collect()
+}}
+
+fn merge_unique<T: Clone + Eq + std::hash::Hash>(v1: &[T], v2: &[T]) -> Vec<T> {{
+    use std::collections::HashSet;
+    let mut seen = HashSet::new();
+    v1.iter().chain(v2.iter())
+        .filter(|x| seen.insert(*x))
+        .cloned()
+        .collect()
+}}
+
+fn main() {{
+    let v1 = vec![1, 2, 3];
+    let v2 = vec![3, 4, 5];
+    
+    let merged = merge_vectors(&v1, &v2);
+    println!("Merged: {{:?}}", merged);
+    
+    let unique = merge_unique(&v1, &v2);
+    println!("Merged (unique): {{:?}}", unique);
+}}
+'''
+    
+    def _rust_generic(self, req: str) -> str:
+        return f'''// Solution for: {req}
+
+fn solve<T: std::fmt::Debug>(data: T) -> T {{
+    data
+}}
+
+fn main() {{
+    let result = solve("sample input");
+    println!("Result: {{:?}}", result);
     def _rust_generic(self, req: str) -> str:
         return f'''// Solution for: {req}
 
