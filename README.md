@@ -28,13 +28,20 @@ EnterpriseAI-Local is a state-of-the-art system designed to understand requireme
 
 ## ✨ Core Features
 
-### 1. **Intelligent Requirements Analysis**
+### 1. **RAG-Enhanced Code Generation** 🆕
+- **Retrieval-Augmented Generation** for higher quality code
+- Retrieves relevant coding examples from 100k+ indexed patterns
+- Semantic search using FAISS vector embeddings
+- Automatically injects best practices from real-world code
+- **Graceful fallback** to template-based generation when RAG unavailable
+
+### 2. **Intelligent Requirements Analysis**
 - Analyzes requirements for complexity metrics
 - Detects architectural patterns (microservices, event-driven, distributed)
 - Identifies technical keywords and domains
 - Scores complexity on a 0-100 scale with sophisticated algorithms
 
-### 2. **Multi-Paradigm Code Generation**
+### 3. **Multi-Paradigm Code Generation**
 Generates code across multiple domains:
 - **REST APIs** with full CRUD operations and authentication
 - **Machine Learning** systems with model training and evaluation
@@ -43,7 +50,7 @@ Generates code across multiple domains:
 - **Data Processing** pipelines with ETL workflows
 - **Enterprise Systems** with scalability and monitoring
 
-### 3. **Comprehensive Quality Standards**
+### 4. **Comprehensive Quality Standards**
 Every generated file includes:
 - **Type Hints**: Full function signatures with return types
 - **Documentation**: Module docstrings, function docstrings with Args/Returns/Raises/Examples
@@ -92,6 +99,30 @@ cd code-boss
 # Install dependencies (if using external packages)
 pip install -r requirements.txt
 ```
+
+### RAG Enhancement (Optional but Recommended) 🆕
+
+For higher quality code generation using retrieval-augmented generation:
+
+```bash
+# Build the RAG index (one-time setup)
+python cli.py rag build
+
+# Check RAG status
+python cli.py generate "test" --help
+# Look for "RAG Enhancement: ✓ ENABLED"
+```
+
+**Benefits of RAG:**
+- Better code quality from real-world examples
+- More accurate patterns and idioms
+- Context-aware generation
+- Learns from 100k+ coding examples
+
+**Without RAG:**
+- Falls back to template-based generation
+- Still produces high-quality code
+- No setup required
 
 ### Three Ways to Use
 

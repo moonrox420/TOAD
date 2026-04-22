@@ -34,6 +34,10 @@ class CodeGenerationAgent:
 
         # Initialize core capabilities
         self._setup_capabilities()
+        
+        # Initialize RAG enhancement if available
+        self._rag_enhanced = None
+        self._setup_rag_enhancement()
 
     def _setup_capabilities(self):
         """Setup all agent capabilities"""
@@ -52,6 +56,27 @@ class CodeGenerationAgent:
         self.skills.add('multi_language_support')
         self.skills.add('real_time_processing')
         self.skills.add('memory_management')
+    
+    def _setup_rag_enhancement(self):
+        """Initialize RAG enhancement if available"""
+        try:
+            from rag.integration import RAGEnhancedAgent
+            # Create a RAG-enhanced wrapper with self as the base agent
+            self._rag_enhanced = RAGEnhancedAgent(base_agent=self, use_rag=True)
+            if self._rag_enhanced.rag_available:
+                logging.info(f"RAG enhancement enabled for {self.name}")
+                self.skills.add('rag_enhanced_generation')
+            else:
+                logging.info(f"RAG unavailable for {self.name}. Using fallback generation.")
+                self._rag_enhanced = None
+        except (ImportError, Exception) as e:
+            logging.info(f"RAG unavailable: {e}. Using fallback generation.")
+            self._rag_enhanced = None
+    
+    @property
+    def rag_available(self) -> bool:
+        """Check if RAG enhancement is available"""
+        return self._rag_enhanced is not None and self._rag_enhanced.rag_available
 
     def analyze_requirements(self, requirements: str) -> Dict[str, Any]:
         """Analyze requirements with maximum precision"""
@@ -68,6 +93,12 @@ class CodeGenerationAgent:
             'priority_level': self._assign_priority(requirements),
             'resource_estimates': self._estimate_resources(requirements)
         }
+        
+        # Add code type and architecture detection for CLI display
+        analysis['code_type'] = self._detect_code_type(requirements, analysis)
+        analysis['architecture'] = self._determine_architecture(requirements, analysis)
+        analysis['estimated_size'] = f"{len(requirements) * 50}-{len(requirements) * 100} chars"
+        
         return analysis
 
     def _parse_requirements(self, requirements: str) -> Dict[str, Any]:
@@ -344,6 +375,24 @@ class CodeGenerationAgent:
 
     def generate_code(self, requirements: str, context: Optional[Dict] = None, refinement_passes: int = 5) -> str:
         """Generate precise code based on requirements with multi-pass refinement (5 passes for maximum quality)"""
+        
+        # Try RAG-enhanced generation first if available
+        if self._rag_enhanced and self.rag_available:
+            try:
+                logging.info(f"Using RAG-enhanced generation for: {requirements[:50]}...")
+                return self._rag_enhanced.generate_code(
+                    requirements,
+                    context=context,
+                    refinement_passes=refinement_passes
+                )
+            except Exception as e:
+                logging.warning(f"RAG generation failed: {e}. Using fallback generation.")
+        
+        # Fallback to standard generation
+        return self._generate_code_fallback(requirements, context, refinement_passes)
+    
+    def _generate_code_fallback(self, requirements: str, context: Optional[Dict] = None, refinement_passes: int = 5) -> str:
+        """Fallback code generation without RAG (original implementation)"""
         self.current_task = requirements
         self.execution_log.append({
             'timestamp': datetime.now(),
@@ -790,14 +839,14 @@ async def get_{entity}() -> Dict[str, List[Dict[str, Any]]]:
 async def create_{entity}(item: Dict[str, Any]) -> Dict[str, Any]:
     """Create new {entity}"""
     logger: logging.Logger = logging.getLogger(__name__)
-    logger.info(f"Creating new {{entity}}")
+    logger.info(f"Creating new {entity}")
     return {{"id": 1, **item}}
 
 @app.get("/{entity}/{{item_id}}")
 async def get_{entity}_by_id(item_id: int) -> Dict[str, Any]:
     """Get {entity} by ID"""
     logger: logging.Logger = logging.getLogger(__name__)
-    logger.info(f"Fetching {{entity}} with id={{item_id}}")
+    logger.info(f"Fetching {entity} with id={{item_id}}")
     return {{"id": item_id}}
 ''')
         
@@ -1564,9 +1613,9 @@ SECURITY FEATURES:
 API ENDPOINTS:
     GET /api/v1/resources - List all resources
     POST /api/v1/resources - Create new resource
-    GET /api/v1/resources/{{id}} - Get resource by ID
-    PUT /api/v1/resources/{{id}} - Update resource
-    DELETE /api/v1/resources/{{id}} - Delete resource
+    GET /api/v1/resources/{id} - Get resource by ID
+    PUT /api/v1/resources/{id} - Update resource
+    DELETE /api/v1/resources/{id} - Delete resource
     GET /api/v1/health - Health check endpoint
 
 DATABASE:
@@ -1877,7 +1926,7 @@ def execute_main_logic() -> Any:
         
         # Type checking
         if not isinstance(data, {param_type.split('[')[0]}):
-            raise TypeError(f"Expected {{param_type}}, got {{type(data).__name__}}")
+            raise TypeError(f"Expected {param_type}, got {{type(data).__name__}}")
         
         # Implementation logic with detailed steps
         logger.debug(f"{func_name}: Starting data processing")
@@ -1932,7 +1981,7 @@ def execute_main_logic() -> Any:
         """Initialize {class_name}."""
         self.data: Dict[str, Any] = {{}}
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.info(f"Initializing {{self.__class__.__name__}}")
+        self.logger.info(f"Initializing {class_name}")
     
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -1967,28 +2016,28 @@ def execute_main_logic() -> Any:
     def _execute_processing(self) -> Dict[str, Any]:
         """Execute the core processing logic with real transformations."""
         try:
-            self.logger.debug(f"Processing {len(self.data)} items")
+            self.logger.debug(f"Processing {{len(self.data)}} items")
             
             # Add metadata
-            self.data['_metadata'] = {
+            self.data['_metadata'] = {{
                 'processed_at': datetime.now().isoformat(),
                 'processor': self.__class__.__name__,
                 'version': '1.0.0'
-            }
+            }}
             
             # Transform nested structures
             for data_key in list(self.data.keys()):
                 if isinstance(self.data[data_key], dict):
-                    self.data[f"{data_key}_enriched"] = {
+                    self.data[f"{{data_key}}_enriched"] = {{
                         'original': self.data[data_key],
                         'enriched': True,
                         'depth': self._calculate_depth(self.data[data_key])
-                    }
+                    }}
             
             self.logger.debug("Processing complete")
             return self.data
         except Exception as processing_error:
-            self.logger.error(f"Processing failed: {str(processing_error)}", exc_info=True)
+            self.logger.error(f"Processing failed: {{str(processing_error)}}", exc_info=True)
             raise
     
     def _calculate_depth(self, obj: Any, current_depth: int = 0) -> int:
@@ -2005,7 +2054,7 @@ def execute_main_logic() -> Any:
     
     def __repr__(self) -> str:
         """String representation of the object."""
-        return f"{{self.__class__.__name__}}(data_size={{len(self.data)}})"
+        return f"{class_name}(data_size={{len(self.data)}})"
 
 '''
             classes.append(cls)
