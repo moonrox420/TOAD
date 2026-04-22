@@ -8,6 +8,13 @@ aiosqlite>=0.17.0
 # =============================================================================
 # These are required for the RAG index building and retrieval system
 
+# Document ingestion (enhanced_rag_system.py)
+# IMPORTANT: install "python-docx", NOT the legacy "docx" package.
+#            The "docx" package is Python-2-only and raises
+#            "ModuleNotFoundError: No module named 'exceptions'" on Python 3.
+python-docx>=0.8.11             # .docx ingestion via enhanced_rag_system.py
+# pymupdf>=1.23.0               # Optional: .pdf ingestion (uncomment to enable)
+
 # Vector store and similarity search
 faiss-cpu>=1.7.4                    # FAISS for vector indexing (use faiss-gpu for GPU)
 
