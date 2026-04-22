@@ -3,12 +3,19 @@
 Badass Coder - Production Ready Code Generator
 Generates clean, functional code in Python, C, JS/TS, and Rust.
 No boilerplate. No fluff. Just working code.
+With TUI interface, performance optimization, and smart pattern detection.
 """
 
 import argparse
 import re
 import sys
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, List, Any
+
+try:
+    import curses
+    HAS_CURSES = True
+except ImportError:
+    HAS_CURSES = False
 
 # Precompiled regex patterns for performance
 PATTERNS = {
@@ -25,6 +32,24 @@ PATTERNS = {
     'validate': re.compile(r'\b(validat|check|verify)\b', re.IGNORECASE),
     'merge': re.compile(r'\bmerge\b', re.IGNORECASE),
     'split': re.compile(r'\bsplit\b', re.IGNORECASE),
+    'async': re.compile(r'\b(async|concurrent|parallel)\b', re.IGNORECASE),
+    'database': re.compile(r'\b(database|db|sql|postgres|mysql)\b', re.IGNORECASE),
+    'api': re.compile(r'\b(api|rest|endpoint|http)\b', re.IGNORECASE),
+    'encrypt': re.compile(r'\b(encrypt|security|auth|token)\b', re.IGNORECASE),
+}
+
+# Performance anti-patterns to avoid
+ANTI_PATTERNS = {
+    'python': {
+        'string_concat_loop': re.compile(r'for\s+\w+\s+in\s+.*:\s*\w+\s*\+='),
+        'unused_comprehension': re.compile(r'\[.*for\s+\w+\s+in\s+.*\](?!.*return|=)'),
+        'nested_membership': re.compile(r'for\s+\w+\s+in\s+.*:\s*for\s+\w+\s+in\s+.*if\s+\w+\s+in\s+'),
+    },
+    'javascript': {
+        'sync_io': re.compile(r'fs\.readFileSync|\.sync\('),
+        'foreach_instead_for': re.compile(r'\.forEach\('),
+        'delete_operator': re.compile(r'delete\s+\w+\.'),
+    }
 }
 
 
@@ -35,6 +60,19 @@ def detect_operations(requirement: str) -> list:
         if pattern.search(requirement):
             ops.append(op)
     return ops
+
+
+def check_anti_patterns(code: str, language: str) -> List[str]:
+    """Check generated code for performance anti-patterns."""
+    issues = []
+    lang_key = 'python' if language in ['python', 'py'] else 'javascript' if language in ['js', 'javascript', 'ts', 'typescript'] else None
+    
+    if lang_key and lang_key in ANTI_PATTERNS:
+        for name, pattern in ANTI_PATTERNS[lang_key].items():
+            if pattern.search(code):
+                issues.append(f"Avoid {name}: {pattern.pattern}")
+    
+    return issues
 
 
 def generate_python(requirement: str) -> str:
