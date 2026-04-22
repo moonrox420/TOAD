@@ -82,6 +82,190 @@ def generate_python(requirement: str) -> str:
     if not ops:
         return '''def process_data(data):
     """Process input data and return result."""
+from datetime import datetime
+from typing import Optional, Dict, List, Tuple
+
+# Try to import rich for TUI
+try:
+    from rich.console import Console
+    from rich.syntax import Syntax
+    from rich.panel import Panel
+    from rich.table import Table
+    from rich.progress import Progress, SpinnerColumn, TextColumn
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+
+
+class CodeAnalyzer:
+    """Analyzes requirements to determine the actual functionality needed."""
+    
+    def __init__(self, requirement: str):
+        self.req = requirement.lower()
+        self.original_req = requirement
+        self.functions = []
+        self.inputs = []
+        self.outputs = []
+        self.algorithms = []
+        self.data_structures = []
+        
+    def analyze(self) -> Dict:
+        """Extract key components from the requirement."""
+        self._detect_functions()
+        self._detect_algorithms()
+        self._detect_data_structures()
+        self._detect_io()
+        
+        return {
+            'functions': self.functions,
+            'algorithms': self.algorithms,
+            'data_structures': self.data_structures,
+            'inputs': self.inputs,
+            'outputs': self.outputs,
+            'is_simple': len(self.functions) <= 2 and len(self.algorithms) <= 1
+        }
+    
+    def _detect_functions(self):
+        """Detect what functions are needed."""
+        patterns = [
+            (r'sort(?:ing)?\s+(?:a\s+)?(\w+)', 'sort'),
+            (r'search(?:ing)?\s+(?:for\s+)?(\w+)', 'search'),
+            (r'find\s+(\w+)', 'find'),
+            (r'filter(?:ing)?\s+(\w+)', 'filter'),
+            (r'map(?:ping)?\s+(\w+)', 'map'),
+            (r'reduce\s+(\w+)', 'reduce'),
+            (r'reverse\s+(\w+)', 'reverse'),
+            (r'merge\s+(\w+)', 'merge'),
+            (r'split\s+(\w+)', 'split'),
+            (r'parse\s+(\w+)', 'parse'),
+            (r'validate\s+(\w+)', 'validate'),
+            (r'convert\s+(\w+)', 'convert'),
+            (r'transform\s+(\w+)', 'transform'),
+            (r'calculate\s+(\w+)', 'calculate'),
+            (r'compute\s+(\w+)', 'compute'),
+            (r'count\s+(\w+)', 'count'),
+            (r'sum\s+(\w+)', 'sum'),
+            (r'average|mean\s+(\w+)', 'average'),
+            (r'max(?:imum)?\s+(\w+)', 'max'),
+            (r'min(?:imum)?\s+(\w+)', 'min'),
+        ]
+        
+        for pattern, func_name in patterns:
+            if re.search(pattern, self.req):
+                self.functions.append(func_name)
+    
+    def _detect_algorithms(self):
+        """Detect specific algorithms mentioned or implied."""
+        if any(x in self.req for x in ['quick', 'efficient', 'fast']):
+            self.algorithms.append('optimized')
+        if 'binary' in self.req or ('sorted' in self.req and 'search' in self.req):
+            self.algorithms.append('binary_search')
+        if 'recursive' in self.req:
+            self.algorithms.append('recursive')
+        if 'iterative' in self.req:
+            self.algorithms.append('iterative')
+        if 'dynamic' in self.req or 'dp' in self.req:
+            self.algorithms.append('dynamic_programming')
+        if 'hash' in self.req or 'dictionary' in self.req:
+            self.algorithms.append('hashing')
+    
+    def _detect_data_structures(self):
+        """Detect data structures involved."""
+        if any(x in self.req for x in ['list', 'array', 'collection']):
+            self.data_structures.append('array')
+        if any(x in self.req for x in ['tree', 'bst', 'binary tree']):
+            self.data_structures.append('tree')
+        if any(x in self.req for x in ['graph', 'node', 'edge']):
+            self.data_structures.append('graph')
+        if any(x in self.req for x in ['stack', 'lifo']):
+            self.data_structures.append('stack')
+        if any(x in self.req for x in ['queue', 'fifo']):
+            self.data_structures.append('queue')
+        if any(x in self.req for x in ['hash', 'map', 'dict', 'object']):
+            self.data_structures.append('hashmap')
+        if any(x in self.req for x in ['linked list', 'linked-list']):
+            self.data_structures.append('linked_list')
+        if any(x in self.req for x in ['heap', 'priority']):
+            self.data_structures.append('heap')
+    
+    def _detect_io(self):
+        """Detect input/output expectations."""
+        if 'file' in self.req:
+            self.inputs.append('file')
+        if 'stdin' in self.req or 'input()' in self.req:
+            self.inputs.append('stdin')
+        if 'json' in self.req:
+            self.inputs.append('json')
+            self.outputs.append('json')
+        if 'csv' in self.req:
+            self.inputs.append('csv')
+            self.outputs.append('csv')
+        if 'print' in self.req or 'output' in self.req:
+            self.outputs.append('stdout')
+
+
+class CodeGenerator:
+    """Generates actual working code based on analyzed requirements."""
+    
+    def __init__(self, language: str):
+        self.language = language.lower()
+        self.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    def generate(self, requirement: str) -> str:
+        """Generate production-ready code."""
+        analyzer = CodeAnalyzer(requirement)
+        analysis = analyzer.analyze()
+        
+        if self.language == 'python':
+            return self._gen_python(requirement, analysis)
+        elif self.language in ['c', 'cpp']:
+            return self._gen_c(requirement, analysis)
+        elif self.language in ['js', 'ts', 'javascript', 'typescript']:
+            return self._gen_js_ts(requirement, analysis)
+        elif self.language == 'rust':
+            return self._gen_rust(requirement, analysis)
+        else:
+            return f"# Error: Unsupported language '{self.language}'"
+
+    def _gen_python(self, req: str, analysis: Dict) -> str:
+        """Generate actual Python implementation."""
+        funcs = analysis['functions']
+        algos = analysis['algorithms']
+        ds = analysis['data_structures']
+        
+        # Determine the actual implementation needed
+        if 'sort' in funcs:
+            return self._py_sort(req, algos)
+        elif 'search' in funcs or 'find' in funcs:
+            return self._py_search(req, algos, ds)
+        elif 'filter' in funcs:
+            return self._py_filter(req)
+        elif 'map' in funcs:
+            return self._py_map(req)
+        elif 'reverse' in funcs:
+            return self._py_reverse(req)
+        elif 'sum' in funcs or 'average' in funcs:
+            return self._py_math(req, funcs)
+        elif 'count' in funcs:
+            return self._py_count(req)
+        elif 'parse' in funcs or 'json' in req:
+        elif 'parse' in funcs and 'json' in req:
+            return self._py_json_parse(req)
+        elif 'validate' in funcs:
+            return self._py_validate(req)
+        elif 'merge' in funcs:
+            return self._py_merge(req)
+        elif 'split' in funcs:
+            return self._py_split(req)
+        else:
+            return self._py_generic(req, analysis)
+    
+    def _py_sort(self, req: str, algos: List[str]) -> str:
+        return f'''#!/usr/bin/env python3
+"""Sort implementation - {req}"""
+
+def sort_data(data):
+    """Sort the input data efficiently."""
     if not data:
         return []
     
@@ -186,6 +370,100 @@ int main() {
     int data[] = {1, 2, 3, 4, 5};
     int size = sizeof(data) / sizeof(data[0]);
     process_data(data, size);
+int main() {{
+    int arr[] = {{1, 2, 3, 4, 5, 6, 7, 8, 9}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int target = 6;
+    
+    int result = binary_search(arr, n, target);
+    
+    if (result != -1)
+        printf("Found %d at index %d\\n", target, result);
+    else
+        printf("%d not found\\n", target);
+    
+    return 0;
+}}
+'''
+        else:
+            return f'''/* Linear search implementation - {req} */
+        return f'''/* Search implementation - {req} */
+#include <stdio.h>
+
+int linear_search(int arr[], int n, int target) {{
+    for (int i = 0; i < n; i++)
+        if (arr[i] == target)
+            return i;
+    return -1;
+}}
+
+int main() {{
+    int arr[] = {{3, 7, 1, 9, 4, 6, 8, 2, 5}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int target = 6;
+    
+    int result = linear_search(arr, n, target);
+    
+    if (result != -1)
+        printf("Found %d at index %d\\n", target, result);
+    else
+        printf("%d not found\\n", target);
+    
+    return 0;
+}}
+'''
+    
+    def _c_reverse(self, req: str) -> str:
+        return f'''/* Reverse implementation - {req} */
+#include <stdio.h>
+#include <string.h>
+
+void reverse_string(char str[]) {{
+    int len = strlen(str);
+    for (int i = 0; i < len / 2; i++) {{
+        char temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }}
+}}
+
+int main() {{
+    char str[] = "hello world";
+    reverse_string(str);
+    printf("Reversed: %s\\n", str);
+    return 0;
+}}
+'''
+    
+    def _c_math(self, req: str) -> str:
+        return f'''/* Math operations - {req} */
+#include <stdio.h>
+
+int sum_array(int arr[], int n) {{
+    int sum = 0;
+    for (int i = 0; i < n; i++)
+        sum += arr[i];
+    return sum;
+}}
+
+int main() {{
+    int arr[] = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int total = sum_array(arr, n);
+    printf("Sum: %d\\n", total);
+    printf("Average: %.2f\\n", (float)total / n);
+    
+    return 0;
+}}
+'''
+    
+    def _c_generic(self, req: str) -> str:
+        return f'''/* Solution for: {req} */
+#include <stdio.h>
+
+int main() {{
+    printf("Implementation for: {req}\\n");
     return 0;
 }
 '''
@@ -446,6 +724,270 @@ def generate_code(requirement: str, language: str) -> str:
     
     generator = lang_map.get(language.lower(), generate_python)
     return generator(requirement)
+}}
+
+console.log(solve("sample input"));
+
+export {{ solve }};
+'''
+
+    def _gen_rust(self, req: str, analysis: Dict) -> str:
+        funcs = analysis['functions']
+        
+        if 'sort' in funcs:
+            return self._rust_sort(req)
+        elif 'search' in funcs or 'find' in funcs:
+            return self._rust_search(req)
+        elif 'filter' in funcs:
+            return self._rust_filter(req)
+        elif 'sum' in funcs or 'average' in funcs:
+            return self._rust_math(req)
+        elif 'validate' in funcs:
+            return self._rust_validate(req)
+        elif 'reverse' in funcs:
+            return self._rust_reverse(req)
+        elif 'count' in funcs:
+            return self._rust_count(req)
+        elif 'merge' in funcs:
+            return self._rust_merge(req)
+        elif 'sum' in funcs:
+            return self._rust_math(req)
+        else:
+            return self._rust_generic(req)
+    
+    def _rust_sort(self, req: str) -> str:
+        return f'''// Sort implementation - {req}
+
+fn sort_data(mut data: Vec<i32>) -> Vec<i32> {{
+    data.sort();
+    data
+}}
+
+fn main() {{
+    let data = vec![64, 34, 25, 12, 22, 11, 90];
+    let sorted = sort_data(data);
+    println!("Sorted: {{:?}}", sorted);
+}}
+
+#[cfg(test)]
+mod tests {{
+    use super::*;
+    
+    #[test]]
+    fn test_sort() {{
+        let result = sort_data(vec![3, 1, 2]);
+        assert_eq!(result, vec![1, 2, 3]);
+    }}
+}}
+'''
+    
+    def _rust_search(self, req: str) -> str:
+        return f'''// Search implementation - {req}
+
+fn search_data(data: &[i32], target: i32) -> Option<usize> {{
+    data.iter().position(|&x| x == target)
+}}
+
+fn main() {{
+    let data = [3, 7, 1, 9, 4, 6, 8, 2, 5];
+    let target = 6;
+    
+    match search_data(&data, target) {{
+        Some(index) => println!("Found {{}} at index {{}}", target, index),
+        None => println!("{{}} not found", target),
+    }}
+}}
+'''
+    
+    def _rust_filter(self, req: str) -> str:
+        return f'''// Filter implementation - {req}
+
+fn filter_data(data: Vec<i32>, predicate: impl Fn(&i32) -> bool) -> Vec<i32> {{
+    data.into_iter().filter(predicate).collect()
+}}
+
+fn main() {{
+    let data = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let evens = filter_data(data, |x| x % 2 == 0);
+    println!("Even numbers: {{:?}}", evens);
+}}
+'''
+    
+    def _rust_math(self, req: str) -> str:
+        return f'''// Math operations - {req}
+
+fn sum_data(data: &[i32]) -> i32 {{
+    data.iter().sum()
+}}
+
+fn average_data(data: &[i32]) -> f64 {{
+    if data.is_empty() {{
+        return 0.0;
+    }}
+    let total: i32 = data.iter().sum();
+    total as f64 / data.len() as f64
+}}
+
+fn main() {{
+    let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let total = sum_data(&data);
+    let avg = average_data(&data);
+fn main() {{
+    let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let total = sum_data(&data);
+    let avg = total as f64 / data.len() as f64;
+    println!("Sum: {{}}, Average: {{:.2}}", total, avg);
+}}
+'''
+    
+    def _rust_validate(self, req: str) -> str:
+        return f'''// Validation implementation - {req}
+
+fn validate_email(email: &str) -> bool {{
+    let re = regex::Regex::new(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$").unwrap();
+    re.is_match(email)
+}}
+
+fn validate_not_empty(s: &str) -> bool {{
+    !s.trim().is_empty()
+}}
+
+fn main() {{
+    let emails = vec!["test@example.com", "invalid.email", "user@domain.org"];
+    
+    for email in emails {{
+        let valid = validate_email(email);
+        println!("{{}}: {{}}", email, if valid {{ "Valid" }} else {{ "Invalid" }});
+    }}
+}}
+'''
+    
+    def _rust_reverse(self, req: str) -> str:
+        return f'''// Reverse implementation - {req}
+
+fn reverse_string(s: &str) -> String {{
+    s.chars().rev().collect()
+}}
+
+fn reverse_vec<T: Clone>(data: &[T]) -> Vec<T> {{
+    data.iter().rev().cloned().collect()
+}}
+
+fn main() {{
+    let text = "hello world";
+    let reversed = reverse_string(text);
+    println!("Original: {{}}, Reversed: {{}}", text, reversed);
+    
+    let nums = vec![1, 2, 3, 4, 5];
+    let reversed_nums = reverse_vec(&nums);
+    println!("Original: {{:?}}, Reversed: {{:?}}", nums, reversed_nums);
+}}
+'''
+    
+    def _rust_count(self, req: str) -> str:
+        return f'''// Count implementation - {req}
+
+fn count_occurrences<T: PartialEq>(data: &[T], target: &T) -> usize {{
+    data.iter().filter(|&x| x == target).count()
+}}
+
+fn count_total<T>(data: &[T]) -> usize {{
+    data.len()
+}}
+
+fn main() {{
+    let data = vec!["apple", "banana", "apple", "orange", "apple"];
+    let target = "apple";
+    
+    let count = count_occurrences(&data, &target);
+    println!("{{}} appears {{}} times", target, count);
+    
+    let total = count_total(&data);
+    println!("Total items: {{}}", total);
+}}
+'''
+    
+    def _rust_merge(self, req: str) -> str:
+        return f'''// Merge implementation - {req}
+
+fn merge_vectors<T: Clone>(v1: &[T], v2: &[T]) -> Vec<T> {{
+    v1.iter().chain(v2.iter()).cloned().collect()
+}}
+
+fn merge_unique<T: Clone + Eq + std::hash::Hash>(v1: &[T], v2: &[T]) -> Vec<T> {{
+    use std::collections::HashSet;
+    let mut seen = HashSet::new();
+    v1.iter().chain(v2.iter())
+        .filter(|x| seen.insert(*x))
+        .cloned()
+        .collect()
+}}
+
+fn main() {{
+    let v1 = vec![1, 2, 3];
+    let v2 = vec![3, 4, 5];
+    
+    let merged = merge_vectors(&v1, &v2);
+    println!("Merged: {{:?}}", merged);
+    
+    let unique = merge_unique(&v1, &v2);
+    println!("Merged (unique): {{:?}}", unique);
+}}
+'''
+    
+    def _rust_generic(self, req: str) -> str:
+        return f'''// Solution for: {req}
+
+fn solve<T: std::fmt::Debug>(data: T) -> T {{
+    data
+}}
+
+fn main() {{
+    let result = solve("sample input");
+    println!("Result: {{:?}}", result);
+    def _rust_generic(self, req: str) -> str:
+        return f'''// Solution for: {req}
+
+fn main() {{
+    println!("Implementation for: {req}");
+}}
+'''
+
+
+class TUI:
+    def __init__(self):
+        self.console = Console()
+
+    def display_header(self):
+        self.console.print(Panel.fit(
+            "[bold blue]BADASS CODER[/bold blue]\\n[dim]Native Multi-Language Engine[/dim]",
+            border_style="blue"
+        ))
+
+    def display_generation(self, language: str, code: str):
+        if not RICH_AVAILABLE:
+            print(code)
+            return
+
+        self.console.print(f"\\n[bold green]Generating {language.upper()} code...[/bold green]\\n")
+        syntax = Syntax(code, language, line_numbers=True, theme="monokai")
+        self.console.print(Panel(syntax, title=f"Generated {language}", border_style="green"))
+
+    def display_stats(self, lang: str, code: str, length: int):
+        if not RICH_AVAILABLE:
+            print(f"Generated {length} characters in {lang}")
+            return
+
+        table = Table(show_header=False, box=None)
+        table.add_column("Metric", style="cyan")
+        table.add_column("Value", style="white")
+        
+        table.add_row("Language", lang.upper())
+        table.add_row("Lines", str(len(code.splitlines())))
+        table.add_row("Characters", str(length))
+        table.add_row("Status", "[green]Ready[/green]")
+        
+        self.console.print("\\n", table)
 
 
 def main():
