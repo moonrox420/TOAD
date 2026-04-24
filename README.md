@@ -116,7 +116,7 @@ cd TOAD
 
 # Create a virtual environment (recommended)
 python -m venv .venv
-Windows: .venv\Scripts\activate
+.venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
