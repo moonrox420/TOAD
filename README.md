@@ -115,7 +115,7 @@ git clone https://github.com/moonrox420/TOAD.git
 cd TOAD
 
 # Create a virtual environment (recommended)
-python3 -m venv .venv
+python -m venv .venv
 Windows: .venv\Scripts\activate
 
 # Install dependencies
